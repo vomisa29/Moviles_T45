@@ -1,38 +1,84 @@
 import 'package:flutter/material.dart';
-import "login.dart";
 
-void main() {
-  runApp(const MyApp());
-}
+import 'login.dart';
+import 'register.dart';
+import 'main_view.dart';
+
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'SportLink',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
+        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const LoginPage(),
+      home: const LandingPage(), // The first view shown
     );
   }
 }
 
+class LandingPage extends StatelessWidget {
+  const LandingPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFFCF9),
+
+      body: Stack(
+        children: [
+          Center(
+            child: Image.asset(
+              'lib/Images/Logo_app_SportLink.png',
+              width: 320,
+              fit: BoxFit.contain,
+            ),
+          ),
+
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                    );
+                  },
+                  child: const Text('LoginPage'),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const MainView()),
+                    );
+                  },
+                  child: const Text('MainView '),
+                ),/*
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ScreenC()),
+                    );
+                  },
+                  child: const Text('Register'),
+                ),*/
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
