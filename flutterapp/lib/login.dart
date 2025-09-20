@@ -25,12 +25,12 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                //Image.file(File("./Images/Logo_app_SportLink.png")),
+                Image.asset("lib/Images/Logo_app_SportLink.png"),
                 SizedBox(height: 26),
                 TextField(
                   controller: _usernameController,
                   decoration: InputDecoration(
-                  labelText: 'Username',
+                  labelText: 'Enter Email',
                   border: OutlineInputBorder(),
                   ),
                 ),
@@ -38,8 +38,47 @@ class _LoginPageState extends State<LoginPage> {
                 TextField(
                   controller: _passwordController,
                   decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: 'Enter Password',
                   border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 26),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 49, 177, 121),
+                    textStyle: TextStyle(
+                      
+                    ),
+                  ),
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(
+                      color: Color.fromRGBO(255, 255, 255, 1)
+                    ),
+                  ),
+                ),
+                SizedBox(height: 26),
+                Center(
+                  child: Text(
+                    'Forgot Password?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF87879D),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Center(
+                child: Text(
+                  "Don't have an account? Sign Up",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    color: Color(0xFF87879D),
+                    ),
                   ),
                 ),
               ],
@@ -47,9 +86,6 @@ class _LoginPageState extends State<LoginPage> {
           )
       ),
       backgroundColor: const Color.fromARGB(255, 255, 252, 249),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => (),
-      ),
     );
   }
 
