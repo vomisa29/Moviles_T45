@@ -1,13 +1,13 @@
 # Welcome to SportApp!
 
-We are **Team 45**:
-Juan Camilo Beltrán
-Pablo Méndez
-Juan Camilo Ibáñez
-Danna Lucía Castillo
-Juan David Valencia
+We are **Team 45**:<br>
+Juan Camilo Beltrán<br>
+Pablo Méndez<br>
+Juan Camilo Ibáñez<br>
+Danna Lucía Castillo<br>
+Juan David Valencia<br>
 
-This repository contains the main wiki, Kanban, and Flutter implementation. It also serves as the entry point to all our resources:
+This repository contains the main wiki, Kanban, and Flutter implementation of the app. It also serves as the entry point to all our resources:
 
 ## 📌 Useful Links
 - 🗂️ [Kanban Board](https://github.com/users/vomisa29/projects/1)
