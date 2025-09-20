@@ -64,16 +64,16 @@ class LandingPage extends StatelessWidget {
                     );
                   },
                   child: const Text('MainView '),
-                ),/*
+                ),
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const ScreenC()),
+                      MaterialPageRoute(builder: (_) => const RegisterPage()),
                     );
                   },
                   child: const Text('Register'),
-                ),*/
+                ),
               ],
             ),
           ),
