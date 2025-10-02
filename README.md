@@ -11,5 +11,5 @@ This repository contains the main wiki, Kanban, and Flutter implementation of th
 
 ## 📌 Useful Links
 - 🗂️ [Kanban Board](https://github.com/users/vomisa29/projects/1)
-- 📖 [Project Wiki](https://github.com/vomisa29/Moviles_T45/wiki/S1MS4)
+- 📖 [Project Wiki](https://github.com/vomisa29/Moviles_T45/wiki)
 - 💻 [Kotlin Repository](https://github.com/dalu09/Kotlin-App)
