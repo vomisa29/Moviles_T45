@@ -22,3 +22,8 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+plugins {
+    id 'com.android.application' version '8.3.0' apply false // or your AGP 8.x
+    id 'com.google.gms.google-services' version '4.4.3' apply false
+    id 'com.google.firebase.crashlytics' version '3.0.6' apply false
+}

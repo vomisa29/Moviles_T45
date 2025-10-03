@@ -45,3 +45,9 @@ android {
 flutter {
     source = "../.."
 }
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'               // if present in your project
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+}
