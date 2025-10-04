@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "74824079029",
+    "project_id": "sportslink-8f8a5",
+    "storage_bucket": "sportslink-8f8a5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74824079029:android:bc520df5c5fcb0ee8a10fc",
+        "android_client_info": {
+          "package_name": "com.example.flutterapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "74824079029-c34ekbaf9hd6f7ntcel0spilu490c6hd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutterapp",
+            "certificate_hash": "679a9af2b7e27f8b6e543f2026552601a84e2d66"
+          }
+        },
+        {
+          "client_id": "74824079029-ashitph7r6jsu40nt4cd2lp2936kvos4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfLiYfqm7J83qmEpYalISo3nLdShd0Lj8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "74824079029-ashitph7r6jsu40nt4cd2lp2936kvos4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "74824079029-t0d4o1v9tthv6nv9krqakd93kccpbbg0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74824079029:android:17fcc67bc44ed4ec8a10fc",
+        "android_client_info": {
+          "package_name": "com.example.kotlinapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "74824079029-ovnjmdqho1lh6iho0muj359utrivr6gn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kotlinapp",
+            "certificate_hash": "8193b2cfd168506f6a2c926387f99dd976e3b5a8"
+          }
+        },
+        {
+          "client_id": "74824079029-ashitph7r6jsu40nt4cd2lp2936kvos4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfLiYfqm7J83qmEpYalISo3nLdShd0Lj8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "74824079029-ashitph7r6jsu40nt4cd2lp2936kvos4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "74824079029-t0d4o1v9tthv6nv9krqakd93kccpbbg0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
