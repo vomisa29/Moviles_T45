@@ -1,11 +1,11 @@
 //import 'dart:io';
 
-import 'dart:developer';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutterapp/presentation/register.dart';
-import 'package:flutterapp/services/auth_service.dart';
 import 'package:flutterapp/presentation/main_view.dart';
+import 'package:flutterapp/viewmodels/login_vm.dart';
 
 import 'package:go_router/go_router.dart';
 
@@ -18,7 +18,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  final _auth = AuthService();
+  final logicVM = LoginVm();  
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -60,7 +60,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 26),
                 ElevatedButton(
-                  onPressed: _login,
+                  onPressed: (){
+                    logicVM.login(_emailController.text,_passwordController.text,context);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 49, 177, 121),
                   ),
@@ -120,21 +122,5 @@ class _LoginPageState extends State<LoginPage> {
       ),
       backgroundColor: const Color.fromARGB(255, 255, 252, 249),
     );
-  }
-  goToMainView(BuildContext context) => Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const MainView()));
-
-  goToRegisterView(BuildContext context) => Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const RegisterPage()));
-
-  _login() async{
-    final user =  await _auth.logInUserWithEmailAndPassword(_emailController.text, _passwordController.text);
-    if (user != null){
-      log("User created succesfully");
-      //goToMainView(context);
-      context.go('/main_view');
-    }
   }
 }

@@ -1,7 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutterapp/services/auth_service.dart';
+import 'package:flutterapp/viewmodels/register_vm.dart';
 import 'package:go_router/go_router.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -12,7 +10,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _auth = AuthService();
+  final registerVM = RegisterVm();
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -54,7 +52,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 26),
                 ElevatedButton(
-                  onPressed: _register,
+                  onPressed: (){
+                    registerVM.register(_emailController.text, _passwordController.text, context);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 49, 177, 121),
                     textStyle: TextStyle(
@@ -108,12 +108,5 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  _register() async{
-    final user =  await _auth.createUserWithEmailAndPassword(_emailController.text, _passwordController.text);
-    if (user != null){
-      log("User created succesfully");
-      //goToMainView(context);
-      context.go('/login');
-    }
-  }
+
 }
