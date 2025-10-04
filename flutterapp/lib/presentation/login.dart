@@ -3,8 +3,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutterapp/auth_service.dart';
-import 'package:flutterapp/main_view.dart';
+import 'package:flutterapp/services/auth_service.dart';
+import 'package:flutterapp/presentation/main_view.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset("lib/Images/Logo_app_SportLink.png"),
+                Image.asset("lib/assets/Logo_app_SportLink.png"),
                 SizedBox(height: 26),
                 TextField(
                   controller: _emailController,

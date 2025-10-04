@@ -1,7 +1,6 @@
 //import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutterapp/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -34,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset("lib/Images/Logo_app_SportLink.png"),
+                Image.asset("lib/assets/Logo_app_SportLink.png"),
                 SizedBox(height: 26),
                 TextField(
                   controller: _usernameController,
