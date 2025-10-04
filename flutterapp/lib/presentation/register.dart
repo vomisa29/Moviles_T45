@@ -1,7 +1,6 @@
 //import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutterapp/services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
