@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutterapp/firebase_options.dart';
+import 'package:flutterapp/services/firebase_options.dart';
 
 import 'app/router.dart';
 
