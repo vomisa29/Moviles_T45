@@ -1,6 +1,6 @@
-//import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutterapp/viewmodels/register_vm.dart';
+import 'package:go_router/go_router.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -10,15 +10,15 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  //final _auth = AuthService();
+  final registerVM = RegisterVm();
 
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
   void dispose(){
     super.dispose();
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
   }
 
@@ -33,10 +33,10 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset("lib/assets/Logo_app_SportLink.png"),
+                Image.asset("lib/assets/Logo_app_SportLink.png",height: 400),
                 SizedBox(height: 26),
                 TextField(
-                  controller: _usernameController,
+                  controller: _emailController,
                   decoration: InputDecoration(
                   labelText: 'Enter Email',
                   border: OutlineInputBorder(),
@@ -52,8 +52,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 26),
                 ElevatedButton(
-                  onPressed: () {
-                    //TODO
+                  onPressed: (){
+                    registerVM.register(_emailController.text, _passwordController.text, context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 49, 177, 121),
@@ -70,15 +70,35 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 10),
                 Center(
-                child: Text(
-                  "Already have an account? Sign Up",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    color: Color(0xFF87879D),
-                    ),
-                  ),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                      Text("Already have an account?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 14,
+                          color: Color(0xFF87879D),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: (){
+                          //goToRegisterView(context);
+                          context.go('/login');
+                        },
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          "Sign up",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 14,
+                            color: Color.fromARGB(255, 82, 186, 255),
+                          ),
+                        ),
+                      ),       
+                    ],
+                  )
                 ),
               ],
             )
@@ -87,5 +107,6 @@ class _RegisterPageState extends State<RegisterPage> {
       backgroundColor: const Color.fromARGB(255, 255, 252, 249),
     );
   }
+
 
 }
