@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/firebase_options.dart';
+import 'services/firebase_options.dart';
 
-import 'login.dart';
-import 'register.dart';
-import 'main_view.dart';
+import 'app/router.dart';
+import 'presentation/landing_page.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,74 +19,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'SportLink',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const LandingPage(),
-    );
-  }
-}
-
-class LandingPage extends StatelessWidget {
-  const LandingPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFFCF9),
-
-      body: Stack(
-        children: [
-          Center(
-            child: Image.asset(
-              'lib/Images/Logo_app_SportLink.png',
-              width: 320,
-              fit: BoxFit.contain,
-            ),
-          ),
-
-          Positioned(
-            right: 16,
-            bottom: 16,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const LoginPage()),
-                    );
-                  },
-                  child: const Text('LoginPage'),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const MainView()),
-                    );
-                  },
-                  child: const Text('MainView '),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const RegisterPage()),
-                    );
-                  },
-                  child: const Text('Register'),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        routerConfig: AppRouter.router
     );
   }
 }

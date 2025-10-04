@@ -6,13 +6,13 @@ class MainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const pinAsset = 'lib/Images/Logo_app_SportLink_Small.png';
+    const pinAsset = 'lib/assets/Logo_app_SportLink_Small.png';
     const pinSize = 100.0;
     const items = [
-      FooterItem('lib/Images/SmallHomeIcon.png', 'Home'),
-      FooterItem('lib/Images/SmallCompassIcon.png', 'Search'),
-      FooterItem('lib/Images/SmallAddIcon.png', 'Add Event'),
-      FooterItem('lib/Images/SmallUserIcon.png', 'Profile'),
+      FooterItem('lib/assets/SmallHomeIcon.png', 'Home'),
+      FooterItem('lib/assets/SmallCompassIcon.png', 'Search'),
+      FooterItem('lib/assets/SmallAddIcon.png', 'Add Event'),
+      FooterItem('lib/assets/SmallUserIcon.png', 'Profile'),
     ];
 
     return Scaffold(
@@ -26,7 +26,7 @@ class MainView extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 Image.asset(
-                  'lib/Images/MapImage.png',
+                  'lib/assets/MapImage.png',
                   fit: BoxFit.cover,
                 ),
 
