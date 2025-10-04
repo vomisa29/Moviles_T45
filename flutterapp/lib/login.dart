@@ -1,6 +1,10 @@
-import 'dart:io';
+//import 'dart:io';
+
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutterapp/auth_service.dart';
+import 'package:flutterapp/main_view.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,8 +15,17 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  final _usernameController = TextEditingController();
+  final _auth = AuthService();
+
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void dispose(){
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
                 Image.asset("lib/Images/Logo_app_SportLink.png"),
                 SizedBox(height: 26),
                 TextField(
-                  controller: _usernameController,
+                  controller: _emailController,
                   decoration: InputDecoration(
                   labelText: 'Enter Email',
                   border: OutlineInputBorder(),
@@ -44,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 26),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 49, 177, 121),
                     textStyle: TextStyle(
@@ -88,5 +101,15 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: const Color.fromARGB(255, 255, 252, 249),
     );
   }
+  goToMainView(BuildContext context) => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const MainView()));
 
+  _login() async{
+    final user =  await _auth.createUserWithEmailAndPassword(_emailController.text, _passwordController.text);
+    if (user != null){
+      log("User created succesfully");
+      goToMainView(context);
+    }
+  }
 }
