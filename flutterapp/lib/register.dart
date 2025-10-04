@@ -1,6 +1,7 @@
-import 'dart:io';
+//import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutterapp/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -10,9 +11,17 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  //final _auth = AuthService();
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void dispose(){
+    super.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +53,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 26),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    //TODO
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 49, 177, 121),
                     textStyle: TextStyle(
