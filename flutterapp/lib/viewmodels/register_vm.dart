@@ -16,8 +16,6 @@ class RegisterVm {
    );
    if (user != null){
      log("User created succesfully");
-
-     context.go('/login');
    }
   }
 }

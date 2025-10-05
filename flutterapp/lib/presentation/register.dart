@@ -54,6 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ElevatedButton(
                   onPressed: (){
                     registerVM.register(_emailController.text, _passwordController.text, context);
+                    context.go('/login');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 49, 177, 121),

@@ -16,7 +16,6 @@ class LoginVm {
     );
     if (user != null){
       log("User created succesfully");
-      context.go('/main_view');
     }
   }
 }
