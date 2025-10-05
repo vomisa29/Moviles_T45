@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import 'widgets/footer_bar.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../viewmodels/main_view_vm.dart';
+import 'package:provider/provider.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => MainViewVm(),
+      child: const MainViewBody(),
+    );
+  }
+}
+
+class MainViewBody extends StatelessWidget {
+  const MainViewBody();
+
+  @override
+  Widget build(BuildContext context) {
+    final vm = context.watch<MainViewVm>();
+
     const items = [
       FooterItem('lib/assets/SmallHomeIcon.png', 'Home'),
       FooterItem('lib/assets/SmallCompassIcon.png', 'Search'),
@@ -17,21 +34,43 @@ class MainView extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          //Aqui ya pongo el mapa
           Expanded(
-            child: Container(
-              color: Colors.grey[300],
-              child: const Center(
-                child: Text(
-                  'Map will be displayed here',
-                  style: TextStyle(fontSize: 18, color: Colors.black54),
-                ),
-              ),
-            ),
+            child: _buildMapSection(vm),
           ),
           const FooterBar(items: items),
         ],
       ),
+    );
+  }
+
+  Widget _buildMapSection(MainViewVm vm) {
+    if (vm.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (vm.errorMessage != null) {
+      return Center(child: Text(vm.errorMessage!));
+    }
+
+    if (vm.currentPosition == null) {
+      return const Center(child: Text("Location unavailable"));
+    }
+
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: vm.currentPosition!,
+        zoom: 14.5,
+      ),
+      myLocationEnabled: true,
+      myLocationButtonEnabled: true,
+      markers: {
+        Marker(
+          markerId: const MarkerId("user"),
+          position: vm.currentPosition!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          infoWindow: const InfoWindow(title: "You are here"),
+        )
+      },
     );
   }
 }

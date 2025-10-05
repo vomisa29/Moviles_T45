@@ -57,6 +57,8 @@ class Event {
   final int numRatings;
   final String venueId;
   final String organizerId;
+  final double? latitude;
+  final double? longitude;
 
   const Event({
     required this.id,
@@ -74,5 +76,33 @@ class Event {
     required this.numRatings,
     required this.venueId,
     required this.organizerId,
+    this.latitude,
+    this.longitude,
   });
+
+  Event copyWith({
+    double? latitude,
+    double? longitude,
+  }) {
+    return Event(
+      id: id,
+      name: name,
+      description: description,
+      sport: sport,
+      startTime: startTime,
+      endTime: endTime,
+      maxCapacity: maxCapacity,
+      skillLevel: skillLevel,
+      assistanceRate: assistanceRate,
+      booked: booked,
+      assisted: assisted,
+      avgRating: avgRating,
+      numRatings: numRatings,
+      venueId: venueId,
+      organizerId: organizerId,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+    );
+  }
 }
+
