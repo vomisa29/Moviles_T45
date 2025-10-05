@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -53,6 +54,12 @@ class MainViewVm extends ChangeNotifier {
   }
 
   Future<void> _loadNearbyEvents() async {
+    await FirebaseAnalytics.instance.logEvent(
+      name: 'petition_loadNearbyEvents',
+      parameters: {
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
     if (_currentPosition == null) return;
 
     try {
