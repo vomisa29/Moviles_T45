@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'widgets/footer_bar.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../viewmodels/main_view_vm.dart';
+import 'package:provider/provider.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const pinAsset = 'lib/assets/Logo_app_SportLink_Small.png';
-    const pinSize = 100.0;
+    return ChangeNotifierProvider(
+      create: (_) => MainViewVm(),
+      child: const MainViewBody(),
+    );
+  }
+}
+
+class MainViewBody extends StatelessWidget {
+  const MainViewBody();
+
+  @override
+  Widget build(BuildContext context) {
+    final vm = context.watch<MainViewVm>();
+
     const items = [
       FooterItem('lib/assets/SmallHomeIcon.png', 'Home'),
       FooterItem('lib/assets/SmallCompassIcon.png', 'Search'),
@@ -16,114 +31,46 @@ class MainView extends StatelessWidget {
     ];
 
     return Scaffold(
-
       backgroundColor: Colors.white,
       body: Column(
         children: [
-
-      Expanded(
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.asset(
-                  'lib/assets/MapImage.png',
-                  fit: BoxFit.cover,
-                ),
-
-                Align(
-                  alignment: const Alignment(-0.80, -0.70),
-                  child: Image.asset(pinAsset, width: pinSize, height: pinSize),
-                ),
-                Align(
-                  alignment: const Alignment(0.70, -0.55),
-                  child: Image.asset(pinAsset, width: pinSize, height: pinSize),
-                ),
-                Align(
-                  alignment: const Alignment(-0.55, 0.10),
-                  child: Image.asset(pinAsset, width: pinSize, height: pinSize),
-                ),
-                Align(
-                  alignment: const Alignment(0.00, 0.60),
-                  child: Image.asset(pinAsset, width: pinSize, height: pinSize),
-                ),
-                Align(
-                  alignment: const Alignment(0.85, 0.20),
-                  child: Image.asset(pinAsset, width: pinSize, height: pinSize),
-                ),
-              ],
-            ),
+          Expanded(
+            child: _buildMapSection(vm),
           ),
-          FooterBar(items: items),
+          const FooterBar(items: items),
         ],
       ),
     );
   }
-}
 
-class FooterBar extends StatelessWidget {
-  const FooterBar({required this.items});
+  Widget _buildMapSection(MainViewVm vm) {
+    if (vm.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-  final List<FooterItem> items;
+    if (vm.errorMessage != null) {
+      return Center(child: Text(vm.errorMessage!));
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      elevation: 6,
-      child: SafeArea(
-        top: false,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: items.map((e) {
-              return FooterButton(item: e, onTap: () {
-                //aqui eventualmente ponemos logica de navegacion
-              });
-            }).toList(),
-          ),
-        ),
+    if (vm.currentPosition == null) {
+      return const Center(child: Text("Location unavailable"));
+    }
+
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: vm.currentPosition!,
+        zoom: 14.5,
       ),
-    );
-  }
-}
-
-class FooterItem {
-  final String assetPath;
-  final String label;
-  const FooterItem(this.assetPath, this.label);
-}
-
-class FooterButton extends StatelessWidget {
-  const FooterButton({required this.item, this.onTap});
-
-  final FooterItem item;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              item.assetPath,
-              width: 28,
-              height: 28,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              item.label, style: GoogleFonts.inter(fontSize: 11, color: Color(0xFF9BA19B), fontWeight: FontWeight.w700
-              ),
-            ),
-          ],
-        ),
-      ),
+      myLocationEnabled: true,
+      myLocationButtonEnabled: true,
+      markers: {
+        Marker(
+          markerId: const MarkerId("user"),
+          position: vm.currentPosition!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          infoWindow: const InfoWindow(title: "You are here"),
+        )
+      },
     );
   }
 }

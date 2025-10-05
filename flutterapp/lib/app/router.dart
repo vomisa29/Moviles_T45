@@ -4,8 +4,8 @@ import '../presentation/login.dart';
 import '../presentation/main_view.dart';
 import '../presentation/register.dart';
 
-class AppRouter {
-  static final GoRouter router = GoRouter(
+GoRouter createRouter() {
+  return GoRouter(
     initialLocation: '/landing_page',
     routes: [
       GoRoute(

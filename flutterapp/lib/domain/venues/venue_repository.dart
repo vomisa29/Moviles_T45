@@ -4,7 +4,7 @@ abstract class VenueRepository {
 
   Future<List<Venue>> getAll();
 
-  Future<Venue> getOne(String id);
+  Future<Venue?> getOne(String id);
 
   Future<String> create(Venue venue);
 
