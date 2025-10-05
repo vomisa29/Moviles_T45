@@ -14,8 +14,8 @@ class EventDto {
   final int assisted;
   final double avgRating;
   final int numRatings;
-  final String venueId;
-  final String organizerId;
+  final DocumentReference venueId;
+  final DocumentReference organizerId;
 
   EventDto({
     required this.id,
@@ -51,8 +51,8 @@ class EventDto {
       assisted: (data['assisted'] as num).toInt(),
       avgRating: (data['avg_rating'] as num).toDouble(),
       numRatings: (data['num_ratings'] as num).toInt(),
-      venueId: data['venueid'] as String,
-      organizerId: data['organizerid'] as String,
+      venueId: data['venueid'] as DocumentReference,
+      organizerId: data['organizerid'] as DocumentReference,
     );
   }
 

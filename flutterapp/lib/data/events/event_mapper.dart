@@ -20,12 +20,12 @@ class EventMapper {
       assisted: dto.assisted,
       avgRating: dto.avgRating,
       numRatings: dto.numRatings,
-      venueId: dto.venueId,
-      organizerId: dto.organizerId,
+      venueId: dto.venueId.id,
+      organizerId: dto.organizerId.id,
     );
   }
 
-  static EventDto fromDomain(Event event) {
+  static EventDto fromDomain(Event event, FirebaseFirestore db) {
     return EventDto(
       id: event.id,
       name: event.name,
@@ -40,14 +40,17 @@ class EventMapper {
       assisted: event.assisted,
       avgRating: event.avgRating,
       numRatings: event.numRatings,
-      venueId: event.venueId,
-      organizerId: event.organizerId,
+      venueId: db.collection('venues').doc(event.venueId),
+      organizerId: db.collection('users').doc(event.organizerId)
     );
   }
 
   static List<Event> toDomainList(List<EventDto> dtos) =>
       dtos.map(toDomain).toList(growable: false);
 
-  static List<EventDto> fromDomainList(List<Event> events) =>
-      events.map(fromDomain).toList(growable: false);
+  static List<EventDto> fromDomainList(
+      List<Event> events,
+      FirebaseFirestore db,
+      ) =>
+      events.map((e) => fromDomain(e, db)).toList(growable: false);
 }

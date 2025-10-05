@@ -63,14 +63,7 @@ class MainViewBody extends StatelessWidget {
       ),
       myLocationEnabled: true,
       myLocationButtonEnabled: true,
-      markers: {
-        Marker(
-          markerId: const MarkerId("user"),
-          position: vm.currentPosition!,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          infoWindow: const InfoWindow(title: "You are here"),
-        )
-      },
+      markers: vm.markers,
     );
   }
 }
