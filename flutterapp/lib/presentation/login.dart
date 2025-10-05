@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutterapp/viewmodels/login_vm.dart';
-
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,6 +13,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   final logicVM = LoginVm();  
 
@@ -58,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                 ElevatedButton(
                   onPressed: (){
                     logicVM.login(_emailController.text,_passwordController.text,context);
+                    context.go('/main_view');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 49, 177, 121),
