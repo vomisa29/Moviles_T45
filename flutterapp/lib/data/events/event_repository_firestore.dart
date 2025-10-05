@@ -5,6 +5,7 @@ import '../../domain/events/event_repository.dart';
 import '../venues/venue_repository_firestore.dart';
 import 'dart:math';
 import '../../domain/venues/venue.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventRepositoryFirestore implements EventRepository {
   final EventFirestoreDs _dataSource;
@@ -55,14 +56,14 @@ class EventRepositoryFirestore implements EventRepository {
 
   @override
   Future<String> create(Event event) async {
-    final dto = EventMapper.fromDomain(event);
+    final dto = EventMapper.fromDomain(event,FirebaseFirestore.instance);
     await _dataSource.create(dto);
     return dto.id;
   }
 
   @override
   Future<void> update(Event event) async {
-    final dto = EventMapper.fromDomain(event);
+    final dto = EventMapper.fromDomain(event,FirebaseFirestore.instance);
     await _dataSource.update(dto);
   }
 
