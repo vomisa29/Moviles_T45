@@ -45,6 +45,7 @@ dependencies:
   google_maps_flutter: ^2.13.1
   provider: ^6.1.5+1
   firebase_performance: ^0.11.1
+  show_hide_password: ^0.0.2
 
 dev_dependencies:
   flutter_test:

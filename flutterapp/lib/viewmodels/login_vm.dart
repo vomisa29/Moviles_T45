@@ -6,7 +6,7 @@ class LoginVm {
 
   final _auth = AuthService();
 
-  void login(email,password,context) async{
+  Future<bool> login(email,password,context) async{
     final user =  await _auth.logInUserWithEmailAndPassword(email, password);
     await FirebaseAnalytics.instance.logEvent(
       name: 'petition_login',
@@ -16,6 +16,8 @@ class LoginVm {
     );
     if (user != null){
       log("User created succesfully");
+      return true;
     }
+    return false;
   }
 }
