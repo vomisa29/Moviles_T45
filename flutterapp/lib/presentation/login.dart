@@ -1,9 +1,9 @@
-//import 'dart:io';
-
+import 'package:show_hide_password/show_hide_password.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/viewmodels/login_vm.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:io';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -35,88 +35,98 @@ class _LoginPageState extends State<LoginPage> {
       body:Center(
         child: Padding(
           padding: const EdgeInsets.all(30.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset("lib/assets/Logo_app_SportLink.png",height: 400),
-                SizedBox(height: 26),
-                TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                  labelText: 'Enter Email',
-                  border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 26),
-                TextField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                  labelText: 'Enter Password',
-                  border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 26),
-                ElevatedButton(
-                  onPressed: (){
-                    logicVM.login(_emailController.text,_passwordController.text,context);
-                    context.go('/main_view');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 49, 177, 121),
-                  ),
-                  child: const Text(
-                    "Login",
-                    style: TextStyle(
-                      color: Color.fromRGBO(255, 255, 255, 1)
+          child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset("lib/assets/Logo_app_SportLink.png",height: 400),
+                  SizedBox(height: 26),
+                  TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                    labelText: 'Enter Email',
+                    border: OutlineInputBorder(),
                     ),
                   ),
-                ),
-                SizedBox(height: 14),
-                Center(
-                  child: Text(
-                    'Forgot Password?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF87879D),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                Center(
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                      Text("Don't have an account?",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 14,
-                          color: Color(0xFF87879D),
+                  SizedBox(height: 26),
+                  ShowHidePassword(
+                    hidePassword: true,
+                    passwordField: (hidePassword){
+                    return TextField(
+                        obscureText: hidePassword,
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Password',
+                          border: OutlineInputBorder(),
                         ),
+                      );
+                    }
+                  ),
+                  SizedBox(height: 26),
+                  ElevatedButton(
+                    onPressed: () async{
+                      bool logged = await logicVM.login(_emailController.text, _passwordController.text, context);
+                      if (logged){
+                        context.go('/main_view');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 49, 177, 121),
+                    ),
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(
+                        color: Color.fromRGBO(255, 255, 255, 1)
                       ),
-                      TextButton(
-                        onPressed: (){
-                          //goToRegisterView(context);
-                          context.go('/register');
-                        },
-                        child: Text(
+                    ),
+                  ),
+                  SizedBox(height: 14),
+                  Center(
+                    child: Text(
+                      'Forgot Password?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF87879D),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                        Text("Don't have an account?",
                           textAlign: TextAlign.center,
-                          "Sign in",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 14,
-                            color: Color.fromARGB(255, 82, 186, 255),
+                            color: Color(0xFF87879D),
                           ),
                         ),
-                      ),       
-                    ],
-                  )
-                ),
-              ],
-            )
+                        TextButton(
+                          onPressed: (){
+                            //goToRegisterView(context);
+                            context.go('/register');
+                          },
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            "Sign up",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              color: Color.fromARGB(255, 82, 186, 255),
+                            ),
+                          ),
+                        ),       
+                      ],
+                    )
+                  ),
+                ],
+              ),
+            ),
           )
       ),
       backgroundColor: const Color.fromARGB(255, 255, 252, 249),
