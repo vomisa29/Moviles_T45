@@ -2,6 +2,7 @@ import 'package:show_hide_password/show_hide_password.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/viewmodels/register_vm.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -38,6 +39,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   Image.asset("lib/assets/Logo_app_SportLink.png",height: 400),
                   SizedBox(height: 26),
                   TextField(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(30),
+                    ],
                     controller: _emailController,
                     decoration: InputDecoration(
                     labelText: 'Enter Email',
@@ -49,6 +53,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     hidePassword: true,
                     passwordField: (hidePassword){
                     return TextField(
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(20),
+                        ],
                         obscureText: hidePassword,
                         controller: _passwordController,
                         decoration: InputDecoration(
@@ -60,12 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   SizedBox(height: 26),
                   ElevatedButton(
-                    onPressed: () async{
-                      bool registered = await registerVM.register(_emailController.text, _passwordController.text, context);
-                      if (registered){
-                        context.go('/login');
-                      }
-                    },
+                    onPressed: () => _registerButtonAction(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 49, 177, 121),
                       textStyle: TextStyle(
@@ -120,5 +122,28 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  Future<void> _registerButtonAction(BuildContext context) async{
+    bool registered = await registerVM.register(_emailController.text, _passwordController.text, context);
+
+    if (registered){
+      context.go('/login');
+    }
+    else{
+      return showDialog(
+          context: context,
+          builder: (context){
+            return AlertDialog(
+                title: Text("Something went wrong...  :("),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context, 'OK'),
+                    child: const Text("Ok")
+                ),
+              ],
+            );
+          }
+        );
+    }
+  }
 
 }
