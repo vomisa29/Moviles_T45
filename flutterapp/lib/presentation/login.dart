@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/viewmodels/login_vm.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:io';
+import 'package:flutter/services.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -43,10 +43,13 @@ class _LoginPageState extends State<LoginPage> {
                   Image.asset("lib/assets/Logo_app_SportLink.png",height: 400),
                   SizedBox(height: 26),
                   TextField(
+                    inputFormatters: [
+                        LengthLimitingTextInputFormatter(30),
+                    ],
                     controller: _emailController,
                     decoration: InputDecoration(
-                    labelText: 'Enter Email',
-                    border: OutlineInputBorder(),
+                      labelText: 'Enter Email',
+                      border: OutlineInputBorder(),
                     ),
                   ),
                   SizedBox(height: 26),
@@ -54,6 +57,9 @@ class _LoginPageState extends State<LoginPage> {
                     hidePassword: true,
                     passwordField: (hidePassword){
                     return TextField(
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(20),
+                        ],
                         obscureText: hidePassword,
                         controller: _passwordController,
                         decoration: InputDecoration(
@@ -65,12 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 26),
                   ElevatedButton(
-                    onPressed: () async{
-                      bool logged = await logicVM.login(_emailController.text, _passwordController.text, context);
-                      if (logged){
-                        context.go('/main_view');
-                      }
-                    },
+                    onPressed: () => _loginButtonAction(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 49, 177, 121),
                     ),
@@ -131,5 +132,29 @@ class _LoginPageState extends State<LoginPage> {
       ),
       backgroundColor: const Color.fromARGB(255, 255, 252, 249),
     );
+  }
+
+  Future<void> _loginButtonAction(BuildContext context) async{
+    bool logged = await logicVM.login(_emailController.text, _passwordController.text, context);
+
+    if (logged){
+      context.go('/main_view');
+    }
+    else{
+      return showDialog(
+          context: context,
+          builder: (context){
+            return AlertDialog(
+                title: Text("Something went wrong...  :("),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context, 'OK'),
+                    child: const Text("Ok")
+                ),
+              ],
+            );
+          }
+        );
+    }
   }
 }
