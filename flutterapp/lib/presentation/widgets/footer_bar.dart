@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class FooterBar extends StatelessWidget {
-  const FooterBar({required this.items, super.key});
+  const FooterBar({
+    required this.items,
+    required this.currentIndex,
+    super.key,
+  });
 
   final List<FooterItem> items;
+  final int currentIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +21,16 @@ class FooterBar extends StatelessWidget {
           color: Colors.white,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: items.map((e) {
+            children: List.generate(items.length, (index) {
+              final item = items[index];
               return FooterButton(
-                item: e,
+                item: item,
+                isSelected: index == currentIndex,
                 onTap: () {
-                  //Eventualmente navegacion aca
+                  //aqui agregamos navegacion despues
                 },
               );
-            }).toList(),
+            }),
           ),
         ),
       ),
@@ -33,45 +39,64 @@ class FooterBar extends StatelessWidget {
 }
 
 class FooterItem {
-  final String assetPath;
+  final IconData icon;
   final String label;
-  const FooterItem(this.assetPath, this.label);
+  const FooterItem(this.icon, this.label);
 }
 
 class FooterButton extends StatelessWidget {
-  const FooterButton({required this.item, this.onTap, super.key});
+  const FooterButton({
+    required this.item,
+    required this.isSelected,
+    this.onTap,
+    super.key,
+  });
 
   final FooterItem item;
+  final bool isSelected;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              item.assetPath,
-              width: 28,
-              height: 28,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              item.label,
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                color: const Color(0xFF9BA19B),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+    final Color activeColor = const Color(0xFF31B179);
+    final Color inactiveColor = const Color(0xFF9BA19B);
+
+    final Color currentColor = isSelected ? activeColor : inactiveColor;
+
+    return TextButton(
+      style: ButtonStyle(
+        overlayColor: WidgetStateProperty.all(
+          const Color(0x1F31B179), //color verdecito
         ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        padding: WidgetStateProperty.all(
+          const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        ),
+      ),
+      onPressed: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            item.icon,
+            size: 28,
+            color: currentColor,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            item.label,
+            style: TextStyle(
+              fontSize: 11,
+              color: currentColor,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Inter',
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+

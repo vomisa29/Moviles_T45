@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import '../../data/events/event_repository_firestore.dart';
 import 'package:flutter/material.dart';
+import '../../domain/events/event.dart';
 
 class MainViewVm extends ChangeNotifier {
   final EventRepositoryFirestore _eventRepository = EventRepositoryFirestore();
@@ -19,11 +20,29 @@ class MainViewVm extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   Set<Marker> get markers => _markers;
 
+  Event? _selectedEvent;
+  Event? get selectedEvent => _selectedEvent;
+  bool get hasSelection => _selectedEvent != null;
+
   MainViewVm() {
     _initLocation();
   }
 
+  Future<void> _onMarkerTap(Event event) async {
+    _selectedEvent = event;
+    notifyListeners();
+  }
+
+  void clearSelection() {
+    _selectedEvent = null;
+    notifyListeners();
+  }
+
+
   Future<void> _initLocation() async {
+    _currentPosition = const LatLng(0, 0);
+    notifyListeners();
+
     try {
       _loading = true;
       notifyListeners();
@@ -76,6 +95,7 @@ class MainViewVm extends ChangeNotifier {
           position: LatLng(event.latitude!, event.longitude!),
           infoWindow: InfoWindow(title: event.name),
           icon: _customIcon ?? BitmapDescriptor.defaultMarker,
+            onTap: () => _onMarkerTap(event)
         );
       }).whereType<Marker>().toSet();
 

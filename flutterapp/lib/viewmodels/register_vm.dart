@@ -7,13 +7,13 @@ class RegisterVm {
   final _auth = AuthService();
 
   Future<bool> register(email,password,context) async{
+    await FirebaseAnalytics.instance.logEvent(
+      name: 'petition_register',
+      parameters: {
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
    final user =  await _auth.createUserWithEmailAndPassword(email,password);
-   await FirebaseAnalytics.instance.logEvent(
-     name: 'petition_register',
-     parameters: {
-       'timestamp': DateTime.now().toIso8601String(),
-     },
-   );
    if (user != null){
      log("User registered succesfully");
      return true;

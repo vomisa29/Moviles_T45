@@ -3,6 +3,8 @@ import 'widgets/footer_bar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../viewmodels/main_view_vm.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
+import 'event_slider.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});
@@ -24,10 +26,10 @@ class MainViewBody extends StatelessWidget {
     final vm = context.watch<MainViewVm>();
 
     const items = [
-      FooterItem('lib/assets/SmallHomeIcon.png', 'Home'),
-      FooterItem('lib/assets/SmallCompassIcon.png', 'Search'),
-      FooterItem('lib/assets/SmallAddIcon.png', 'Add Event'),
-      FooterItem('lib/assets/SmallUserIcon.png', 'Profile'),
+      FooterItem(CupertinoIcons.house_fill, 'Home'),
+      FooterItem(CupertinoIcons.compass, 'Search'),
+      FooterItem(CupertinoIcons.plus_circle, 'Add Event'),
+      FooterItem(CupertinoIcons.person_crop_circle, 'Profile'),
     ];
 
     return Scaffold(
@@ -35,9 +37,19 @@ class MainViewBody extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: _buildMapSection(vm),
+            child: Stack(
+              children: [
+                _buildMapSection(vm),
+                if (vm.selectedEvent != null)
+                  EventSlider(
+                    key: ValueKey(vm.selectedEvent!.id),
+                    event: vm.selectedEvent!,
+                    onClose: vm.clearSelection,
+                  ),
+              ],
+            ),
           ),
-          const FooterBar(items: items),
+          const FooterBar(items: items, currentIndex: 0),
         ],
       ),
     );
