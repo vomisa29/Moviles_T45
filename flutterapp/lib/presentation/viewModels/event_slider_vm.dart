@@ -1,16 +1,16 @@
 import 'package:flutter/foundation.dart';
-import '../../domain/events/event.dart';
-import '../../domain/venues/venue.dart';
-import '../../data/venues/venue_repository_firestore.dart';
+import '../../model/models/event.dart';
+import '../../model/models/venue.dart';
+import '../../model/repositories/venue_repository_imp.dart';
 
 class EventSliderVm extends ChangeNotifier {
   final Event event;
-  final VenueRepositoryFirestore _venueRepo;
+  final VenueRepositoryImplementation _venueRepo;
 
   EventSliderVm({
     required this.event,
-    VenueRepositoryFirestore? venueRepo,
-  }) : _venueRepo = venueRepo ?? VenueRepositoryFirestore() {
+    VenueRepositoryImplementation? venueRepo,
+  }) : _venueRepo = venueRepo ?? VenueRepositoryImplementation() {
     _init();
   }
 

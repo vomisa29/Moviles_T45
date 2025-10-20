@@ -1,6 +1,6 @@
 import 'package:show_hide_password/show_hide_password.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/viewmodels/register_vm.dart';
+import 'package:flutterapp/presentation/viewModels/register_vm.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 

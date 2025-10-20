@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../domain/events/event.dart';
-import '../../domain/venues/venue.dart';
-import '../viewmodels/event_slider_vm.dart';
+import '../model/models/event.dart';
+import '../model/models/venue.dart';
+import 'viewModels/event_slider_vm.dart';
 
 class EventSlider extends StatefulWidget {
   const EventSlider({
@@ -307,7 +307,7 @@ class _EventCardContents extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () {
-              //Aqui ponemos para registrarse al evento luego
+              //aqui ponemos para registrarse al evento luego
             },
             child: const Text('Reserve'),
           ),

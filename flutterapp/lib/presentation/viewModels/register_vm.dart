@@ -1,5 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutterapp/services/auth_service.dart';
+import 'package:flutterapp/model/serviceAdapters/auth_adapter.dart';
 import 'dart:developer';
 
 

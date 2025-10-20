@@ -1,6 +1,6 @@
 import 'package:show_hide_password/show_hide_password.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/viewmodels/login_vm.dart';
+import 'package:flutterapp/presentation/viewModels/login_vm.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/model/models/venue.dart';
 import 'widgets/footer_bar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../viewmodels/main_view_vm.dart';
+import 'viewModels/main_view_vm.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'event_slider.dart';
+import 'widgets/venues_list_sheet.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});
@@ -19,7 +21,16 @@ class MainView extends StatelessWidget {
 }
 
 class MainViewBody extends StatelessWidget {
-  const MainViewBody();
+  const MainViewBody({super.key});
+
+  void _showVenuesSheet(BuildContext context, List<Venue> venues) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => VenuesListSheet(venues: venues),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +51,44 @@ class MainViewBody extends StatelessWidget {
             child: Stack(
               children: [
                 _buildMapSection(vm),
+                Positioned(
+                  bottom: 20,
+                  left: 20,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ElevatedButton.icon(
+                        icon: const Icon(CupertinoIcons.sportscourt),
+                        label: const Text('Venues'),
+                        onPressed: () => _showVenuesSheet(context, vm.allVenues),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton.icon(
+                        icon: Icon(vm.filterState == EventFilterState.nearby
+                            ? CupertinoIcons.globe
+                            : CupertinoIcons.location_solid),
+                        label: Text(vm.filterState == EventFilterState.nearby
+                            ? 'Show All'
+                            : 'Show Nearby'),
+                        onPressed: vm.toggleEventFilter,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 if (vm.selectedEvent != null)
                   EventSlider(
                     key: ValueKey(vm.selectedEvent!.id),
