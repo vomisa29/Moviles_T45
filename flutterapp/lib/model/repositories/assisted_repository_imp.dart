@@ -2,10 +2,10 @@ import '../models/assisted.dart';
 import '../serviceAdapters/assisted_firestore_adapter.dart';
 import 'assisted_repository_int.dart';
 
-class AssistedEventRepositoryFirestore implements AssistedEventRepository {
+class AssistedEventRepositoryImplementation implements AssistedEventRepository {
   final AssistedFirestoreDs _dataSource;
 
-  AssistedEventRepositoryFirestore({AssistedFirestoreDs? dataSource})
+  AssistedEventRepositoryImplementation({AssistedFirestoreDs? dataSource})
       : _dataSource = dataSource ?? AssistedFirestoreDs.instance;
 
   @override

@@ -1,6 +1,6 @@
 import '../models/user.dart';
 
-abstract class VenueRepository {
+abstract class UserRepository {
 
   Future<List<User>> getAll();
 

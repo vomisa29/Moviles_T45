@@ -11,9 +11,9 @@ class EventRepositoryImplementation implements EventRepository {
 
   EventRepositoryImplementation({
     EventFirestoreDs? dataSource,
-    VenueRepositoryImplementation? venueRepository,
+    required VenueRepositoryImplementation venueRepository,
   })  : _dataSource = dataSource ?? EventFirestoreDs.instance,
-        _venueRepository = venueRepository ?? VenueRepositoryImplementation();
+        _venueRepository = venueRepository;
 
   @override
   Future<Event?> getOne(String id) async {

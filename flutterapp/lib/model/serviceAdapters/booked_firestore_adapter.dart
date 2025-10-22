@@ -57,4 +57,19 @@ class BookedFirestoreDs {
       'userid': userRef,
     };
   }
+  
+  Future<bool> isEventBookedByUser({required String userId, required String eventId}) async {
+    final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+    final eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
+
+    final querySnapshot = await _col
+        .where('userid', isEqualTo: userRef)
+        .where('eventid', isEqualTo: eventRef)
+        .limit(1)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
+  }
+
+
 }

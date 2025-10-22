@@ -12,4 +12,5 @@ abstract class AssistedEventRepository {
   Future<String> create(AssistedEvent booking);
   
   Future<void> delete(String docId);
+
 }

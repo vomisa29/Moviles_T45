@@ -14,6 +14,8 @@ class MainViewVm extends ChangeNotifier {
   late final EventRepositoryImplementation _eventRepository;
   late final VenueRepositoryImplementation _venueRepository;
 
+  StreamSubscription<Position>? _positionStreamSubscription;
+
   LatLng? _currentPosition;
   bool _loading = true;
   String? _errorMessage;
@@ -39,6 +41,12 @@ class MainViewVm extends ChangeNotifier {
     _init();
   }
 
+  @override
+  void dispose() {
+    _positionStreamSubscription?.cancel();
+    super.dispose();
+  }
+
   void toggleEventFilter() {
     if (_filterState == EventFilterState.nearby) {
       _filterState = EventFilterState.all;
@@ -60,7 +68,8 @@ class MainViewVm extends ChangeNotifier {
       notifyListeners();
 
       await _loadCustomPin();
-      await _determineCurrentUserPosition();
+
+      await _initializeLocationServices();
 
       await _loadAllEventsAndVenues();
 
@@ -77,7 +86,7 @@ class MainViewVm extends ChangeNotifier {
     }
   }
 
-  Future<void> _determineCurrentUserPosition() async {
+  Future<void> _initializeLocationServices() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       permission = await Geolocator.requestPermission();
@@ -86,8 +95,34 @@ class MainViewVm extends ChangeNotifier {
         return;
       }
     }
-    final position = await Geolocator.getCurrentPosition();
-    _currentPosition = LatLng(position.latitude, position.longitude);
+
+    try {
+      final position = await Geolocator.getCurrentPosition();
+      _currentPosition = LatLng(position.latitude, position.longitude);
+    } catch (e) {
+      _errorMessage = "Could not get current location.";
+      return;
+    }
+
+    const LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 50,
+    );
+
+    _positionStreamSubscription = Geolocator.getPositionStream(locationSettings: locationSettings).listen(
+          (Position newPosition) {
+        debugPrint("New position detected: ${newPosition.latitude}, ${newPosition.longitude}");
+        _currentPosition = LatLng(newPosition.latitude, newPosition.longitude);
+
+        if (_filterState == EventFilterState.nearby) {
+          _updateMarkers();
+          notifyListeners();
+        }
+      },
+      onError: (error) {
+        debugPrint("Error listening to location stream: $error");
+      },
+    );
   }
 
   Future<void> _loadAllEventsAndVenues() async {

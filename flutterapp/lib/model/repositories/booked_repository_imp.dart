@@ -2,10 +2,10 @@ import '../models/booked.dart';
 import '../serviceAdapters/booked_firestore_adapter.dart';
 import 'booked_repository_int.dart';
 
-class BookedEventRepositoryFirestore implements BookedEventRepository {
+class BookedEventRepositoryImplementation implements BookedEventRepository {
   final BookedFirestoreDs _dataSource;
 
-  BookedEventRepositoryFirestore({BookedFirestoreDs? dataSource})
+  BookedEventRepositoryImplementation({BookedFirestoreDs? dataSource})
       : _dataSource = dataSource ?? BookedFirestoreDs.instance;
 
   @override
@@ -31,5 +31,11 @@ class BookedEventRepositoryFirestore implements BookedEventRepository {
   @override
   Future<void> delete(String docId) {
     return _dataSource.delete(docId);
+  }
+
+  @override
+  Future<bool> isEventBookedByUser({required String userId, required String eventId}) {
+    return _dataSource.isEventBookedByUser(userId: userId, eventId: eventId);
+
   }
 }
