@@ -1,32 +1,47 @@
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import '../model/serviceAdapters/auth_adapter.dart';
-import 'package:firebase_auth/firebase_auth.dart' show User;
 
 class AppUser {
   final String uid;
   final String? email;
-  const AppUser({required this.uid, this.email});
+  final String? displayName;
+
+  const AppUser({
+    required this.uid,
+    this.email,
+    this.displayName,
+  });
 }
 
 class AuthNotifier extends ChangeNotifier {
   final AuthService _authService = AuthService();
   AppUser? _user;
+  late final Stream<AppUser?> _authStateChanges;
 
   AppUser? get user => _user;
   bool get isLoggedIn => _user != null;
 
   AuthNotifier() {
-    _authService.authStateChanges.listen(_onAuthStateChanged);
+    _authStateChanges = _authService.authStateChanges.map(_mapFirebaseUser);
+    _authStateChanges.listen((appUser) {
+      _user = appUser;
+      notifyListeners();
+    });
   }
 
-  void _onAuthStateChanged(User? firebaseUser) {
+
+  AppUser? _mapFirebaseUser(firebase_auth.User? firebaseUser) {
     if (firebaseUser == null) {
-      _user = null;
-    } else {
-      _user = AppUser(uid: firebaseUser.uid, email: firebaseUser.email);
+      return null;
     }
-    notifyListeners();
+    return AppUser(
+      uid: firebaseUser.uid,
+      email: firebaseUser.email,
+      displayName: firebaseUser.displayName,
+    );
   }
+
   Future<void> signOut() async {
     await _authService.signOut();
   }

@@ -1,13 +1,12 @@
-enum UserRole { user, admin, organizer }
+enum UserRole { user, admin}
 
 
 UserRole roleFromString(String? role) {
   switch (role?.toLowerCase()) {
     case 'admin':
       return UserRole.admin;
-    case 'organizer':
-      return UserRole.organizer;
     case 'user':
+      return UserRole.user;
     default:
       return UserRole.user;
   }
@@ -17,8 +16,6 @@ String roleToString(UserRole role) {
   switch (role) {
     case UserRole.admin:
       return 'admin';
-    case UserRole.organizer:
-      return 'organizer';
     case UserRole.user:
       return 'user';
   }
@@ -26,26 +23,26 @@ String roleToString(UserRole role) {
 
 class User {
   final String uid;
-  final String username;
+  final String? username;
   final String email;
-  final String description;
+  final String? description;
   final UserRole role;
-  final DateTime createdAt;
-  final List<String> sportList;
-  final double avgRating;
-  final int numRating;
-  final double assistanceRate;
+  final DateTime? createdAt;
+  final List<String>? sportList;
+  final double? avgRating;
+  final int? numRating;
+  final double? assistanceRate;
 
   const User({
     required this.uid,
-    required this.username,
+    this.username,
     required this.email,
-    required this.description,
+    this.description,
     required this.role,
-    required this.createdAt,
-    required this.sportList,
-    required this.avgRating,
-    required this.numRating,
-    required this.assistanceRate,
+    this.createdAt,
+    this.sportList,
+    this.avgRating,
+    this.numRating,
+    this.assistanceRate,
   });
 }

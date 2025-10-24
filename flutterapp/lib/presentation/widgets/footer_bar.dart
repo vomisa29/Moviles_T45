@@ -4,11 +4,13 @@ class FooterBar extends StatelessWidget {
   const FooterBar({
     required this.items,
     required this.currentIndex,
+    this.onItemTapped,
     super.key,
   });
 
   final List<FooterItem> items;
   final int currentIndex;
+  final ValueChanged<int>? onItemTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,9 @@ class FooterBar extends StatelessWidget {
                 item: item,
                 isSelected: index == currentIndex,
                 onTap: () {
-                  //aqui agregamos navegacion despues
+                  if (onItemTapped != null) {
+                    onItemTapped!(index);
+                  }
                 },
               );
             }),
@@ -60,30 +64,21 @@ class FooterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color activeColor = const Color(0xFF31B179);
     final Color inactiveColor = const Color(0xFF9BA19B);
-
     final Color currentColor = isSelected ? activeColor : inactiveColor;
 
     return TextButton(
       style: ButtonStyle(
-        overlayColor: WidgetStateProperty.all(
-          const Color(0x1F31B179), //color verdecito
-        ),
+        overlayColor: WidgetStateProperty.all(const Color(0x1F31B179)),
         shape: WidgetStateProperty.all(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
         padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        ),
+            const EdgeInsets.symmetric(horizontal: 6, vertical: 4)),
       ),
       onPressed: onTap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            item.icon,
-            size: 28,
-            color: currentColor,
-          ),
+          Icon(item.icon, size: 28, color: currentColor),
           const SizedBox(height: 4),
           Text(
             item.label,
@@ -99,4 +94,5 @@ class FooterButton extends StatelessWidget {
     );
   }
 }
+
 

@@ -36,29 +36,34 @@ class UserFirestoreDs {
 
     return User(
       uid: doc.id,
-      username: data['username'],
       email: data['email'],
-      description: data['description'],
       role: roleFromString(data['role']),
-      createdAt: data['createdAt'],
-      sportList: List<String>.from(data['sportList'] ?? []),
-      avgRating: (data['avgRating']).toDouble(),
-      numRating: data['numRating'],
-      assistanceRate: (data['assistanceRate']).toDouble(),
+
+      username: data['username'] as String?,
+      description: data['description'] as String?,
+
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+      sportList: data['sportList'] == null ? null : List<String>.from(data['sportList']),
+
+      avgRating: (data['avgRating'] as num?)?.toDouble(),
+      numRating: data['numRating'] as int?,
+      assistanceRate: (data['assistanceRate'] as num?)?.toDouble(),
     );
   }
 
   Map<String, dynamic> _toJson(User user) {
     return {
-      'username': user.username,
       'email': user.email,
-      'description': user.description,
       'role': roleToString(user.role),
-      'createdAt': Timestamp.fromDate(user.createdAt),
-      'sportList': user.sportList,
-      'avgRating': user.avgRating,
-      'numRating': user.numRating,
-      'assistanceRate': user.assistanceRate,
+      'uid': user.uid,
+
+      if (user.username != null) 'username': user.username,
+      if (user.description != null) 'description': user.description,
+      if (user.createdAt != null) 'createdAt': Timestamp.fromDate(user.createdAt!),
+      if (user.sportList != null) 'sportList': user.sportList,
+      if (user.avgRating != null) 'avgRating': user.avgRating,
+      if (user.numRating != null) 'numRating': user.numRating,
+      if (user.assistanceRate != null) 'assistanceRate': user.assistanceRate,
     };
   }
 }

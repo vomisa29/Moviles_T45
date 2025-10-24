@@ -1,23 +1,33 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutterapp/model/serviceAdapters/auth_adapter.dart';
+import 'package:flutter/material.dart';
 import 'dart:developer';
-
+import '../../domain/useCases/useCase_register.dart';
 
 class RegisterVm {
-  final _auth = AuthService();
+  final RegisterUseCase _registerUseCase;
+  String? errorMessage;
 
-  Future<bool> register(email,password,context) async{
+  RegisterVm({RegisterUseCase? registerUseCase})
+      : _registerUseCase = registerUseCase ?? RegisterUseCase();
+
+  Future<bool> register(String email, String password, BuildContext context) async {
     await FirebaseAnalytics.instance.logEvent(
       name: 'petition_register',
       parameters: {
         'timestamp': DateTime.now().toIso8601String(),
       },
     );
-   final user =  await _auth.createUserWithEmailAndPassword(email,password);
-   if (user != null){
-     log("User registered succesfully");
-     return true;
-   }
-   return false;
+
+    final result = await _registerUseCase.execute(email: email, password: password);
+
+    if (result.success) {
+      log("User registered and created in Firestore successfully");
+      errorMessage = null;
+      return true;
+    } else {
+      errorMessage = result.errorMessage;
+      log("Registration failed: ${result.errorMessage}");
+      return false;
+    }
   }
 }

@@ -2,13 +2,7 @@ import '../../model/models/booked.dart';
 import '../../model/repositories/booked_repository_imp.dart';
 import '../../model/repositories/user_repository_imp.dart';
 import '../../model/repositories/event_repository_imp.dart';
-
-
-class UseCaseResult {
-  final bool success;
-  final String? errorMessage;
-  const UseCaseResult({required this.success, this.errorMessage});
-}
+import 'useCase_result.dart';
 
 class CreateBookingUseCase {
   final BookedEventRepositoryImplementation _bookedEventRepository;

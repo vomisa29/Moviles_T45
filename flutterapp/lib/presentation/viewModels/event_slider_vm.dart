@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../../model/useCases/useCase_create_booked.dart';
+import '../../domain/useCases/useCase_create_booked.dart';
 import '../../model/models/event.dart';
 import '../../model/models/venue.dart';
 import '../../model/repositories/booked_repository_imp.dart';

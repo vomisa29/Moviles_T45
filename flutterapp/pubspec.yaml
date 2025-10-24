@@ -46,6 +46,9 @@ dependencies:
   provider: ^6.1.5+1
   firebase_performance: ^0.11.1
   show_hide_password: ^0.0.2
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:
