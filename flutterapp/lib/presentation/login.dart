@@ -1,6 +1,6 @@
 import 'package:show_hide_password/show_hide_password.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/viewmodels/login_vm.dart';
+import 'package:flutterapp/presentation/viewModels/login_vm.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
@@ -137,24 +137,23 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _loginButtonAction(BuildContext context) async{
     bool logged = await logicVM.login(_emailController.text, _passwordController.text, context);
 
-    if (logged){
-      context.go('/main_view');
-    }
-    else{
+    if (!logged){
       return showDialog(
           context: context,
           builder: (context){
             return AlertDialog(
-                title: Text("Something went wrong...  :("),
-                actions: [
-                  ElevatedButton(
+              title: Text("Something went wrong...  :("),
+              actions: [
+                ElevatedButton(
                     onPressed: () => Navigator.pop(context, 'OK'),
                     child: const Text("Ok")
                 ),
               ],
             );
           }
-        );
+      );
+    }
+    else{
     }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:show_hide_password/show_hide_password.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/viewmodels/register_vm.dart';
+import 'package:flutterapp/presentation/viewModels/register_vm.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 
@@ -27,7 +27,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //Most of the structure is here
       body:Center(
         child: Padding(
           padding: const EdgeInsets.all(30.0),
@@ -125,24 +124,21 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> _registerButtonAction(BuildContext context) async{
     bool registered = await registerVM.register(_emailController.text, _passwordController.text, context);
 
-    if (registered){
-      context.go('/login');
-    }
-    else{
+    if (!registered){
       return showDialog(
           context: context,
           builder: (context){
             return AlertDialog(
-                title: Text("Something went wrong...  :("),
-                actions: [
-                  ElevatedButton(
+              title: Text("Something went wrong...  :("),
+              actions: [
+                ElevatedButton(
                     onPressed: () => Navigator.pop(context, 'OK'),
                     child: const Text("Ok")
                 ),
               ],
             );
           }
-        );
+      );
     }
   }
 

@@ -1,4 +1,4 @@
-import 'venue.dart';
+import '../models/venue.dart';
 
 abstract class VenueRepository {
 

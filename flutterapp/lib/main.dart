@@ -1,19 +1,34 @@
+// lib/main.dart
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'app/router.dart';
+import 'app/auth_notifier.dart';
 import 'package:go_router/go_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
+  }
+
+  final authNotifier = AuthNotifier();
+
+  final router = createRouter(authNotifier);
+
+  runApp(
+    ChangeNotifierProvider.value(
+      value: authNotifier,
+      child: MyApp(router: router),
+    ),
   );
-
-  final router = createRouter();
-
-  runApp(MyApp(router: router));
 }
 
 class MyApp extends StatelessWidget {
@@ -33,3 +48,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

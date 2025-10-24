@@ -1,29 +1,25 @@
-import 'event_firestore_ds.dart';
-import 'event_mapper.dart';
-import '../../domain/events/event.dart';
-import '../../domain/events/event_repository.dart';
-import '../venues/venue_repository_firestore.dart';
 import 'dart:math';
-import '../../domain/venues/venue.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/event.dart';
+import '../models/venue.dart';
+import '../serviceAdapters/event_firestore_adapter.dart';
+import 'event_repository_int.dart';
+import 'venue_repository_imp.dart';
 
-class EventRepositoryFirestore implements EventRepository {
+class EventRepositoryImplementation implements EventRepository {
   final EventFirestoreDs _dataSource;
-  final VenueRepositoryFirestore _venueRepository;
+  final VenueRepositoryImplementation _venueRepository;
 
-  EventRepositoryFirestore({
+  EventRepositoryImplementation({
     EventFirestoreDs? dataSource,
-    VenueRepositoryFirestore? venueRepository,
+    required VenueRepositoryImplementation venueRepository,
   })  : _dataSource = dataSource ?? EventFirestoreDs.instance,
-        _venueRepository =
-            venueRepository ?? VenueRepositoryFirestore();
+        _venueRepository = venueRepository;
 
   @override
   Future<Event?> getOne(String id) async {
-    final dto = await _dataSource.getOne(id);
-    if (dto == null) return null;
+    final event = await _dataSource.getOne(id);
+    if (event == null) return null;
 
-    final event = EventMapper.toDomain(dto);
     final venue = await _venueRepository.getOne(event.venueId);
     if (venue != null) {
       return event.copyWith(
@@ -36,10 +32,9 @@ class EventRepositoryFirestore implements EventRepository {
 
   @override
   Future<List<Event>> getAll() async {
-    final dtos = await _dataSource.getAll();
-    final events = EventMapper.toDomainList(dtos);
-
+    final events = await _dataSource.getAll();
     final enriched = <Event>[];
+
     for (final event in events) {
       final venue = await _venueRepository.getOne(event.venueId);
       if (venue != null) {
@@ -56,15 +51,13 @@ class EventRepositoryFirestore implements EventRepository {
 
   @override
   Future<String> create(Event event) async {
-    final dto = EventMapper.fromDomain(event,FirebaseFirestore.instance);
-    await _dataSource.create(dto);
-    return dto.id;
+    await _dataSource.create(event);
+    return event.id;
   }
 
   @override
   Future<void> update(Event event) async {
-    final dto = EventMapper.fromDomain(event,FirebaseFirestore.instance);
-    await _dataSource.update(dto);
+    await _dataSource.update(event);
   }
 
   @override
@@ -72,21 +65,18 @@ class EventRepositoryFirestore implements EventRepository {
     await _dataSource.delete(id);
   }
 
-  @override
+  /*@override
   Future<List<Event>> getNearby({
     required double latitude,
     required double longitude,
     double radiusKm = 10.0,
   }) async {
-
-    final dtos = await _dataSource.getAll();
-    final events = dtos.map(EventMapper.toDomain).toList(growable: false);
+    final events = await _dataSource.getAll();
 
     final nearbyEvents = <Event>[];
     final venueDict = <String, Venue?>{};
 
     for (final event in events) {
-
       final venue = venueDict[event.venueId] ??
           await _venueRepository.getOne(event.venueId);
 
@@ -97,30 +87,31 @@ class EventRepositoryFirestore implements EventRepository {
         final vLng = venue.longitude;
         final distance = _distanceKm(latitude, longitude, vLat, vLng);
         if (distance <= radiusKm) {
-            nearbyEvents.add(event.copyWith(
-              latitude: vLat,
-              longitude: vLng,
-            ));
-          }
-
+          nearbyEvents.add(event.copyWith(
+            latitude: vLat,
+            longitude: vLng,
+          ));
+        }
       }
     }
 
     return nearbyEvents;
-  }
+  }*/
 
-  //Otras funciones chiquitas para el calculo de distancia
   double _distanceKm(double lat1, double lon1, double lat2, double lon2) {
     const r = 6371.0;
     final dLat = _deg2rad(lat2 - lat1);
     final dLon = _deg2rad(lon2 - lon1);
-    final a =
-        sin(dLat / 2) * sin(dLat / 2) +
-            cos(_deg2rad(lat1)) * cos(_deg2rad(lat2)) *
-                sin(dLon / 2) * sin(dLon / 2);
+    final a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_deg2rad(lat1)) *
+            cos(_deg2rad(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
     final c = 2 * atan2(sqrt(a), sqrt(1 - a));
     return r * c;
   }
 
-  double _deg2rad(double deg) { return deg * (pi / 180.0);}
+  double _deg2rad(double deg) {
+    return deg * (pi / 180.0);
+  }
 }

@@ -1,4 +1,4 @@
-import 'event.dart';
+import '../models/event.dart';
 
 abstract class EventRepository {
 
@@ -12,9 +12,9 @@ abstract class EventRepository {
 
   Future<void> delete(String id);
 
-  Future<List<Event>> getNearby({
+  /*Future<List<Event>> getNearby({
     required double latitude,
     required double longitude,
     double radiusKm = 10.0,
-  });
+  });*/
 }
