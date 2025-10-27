@@ -31,6 +31,18 @@ class UserFirestoreDs {
     await _col.doc(uid).delete();
   }
 
+  Future<User?> getUserByUsername(String username) async {
+    final query = await _col
+        .where('username', isEqualTo: username)
+        .limit(1)
+        .get();
+
+    if (query.docs.isEmpty) {
+      return null;
+    }
+    return _fromFirestore(query.docs.first);
+  }
+
   User _fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
 

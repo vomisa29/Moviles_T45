@@ -11,4 +11,6 @@ abstract class UserRepository {
   Future<void> update(User user);
 
   Future<void> delete(String id);
+
+  Future<User?> getUserByUsername(String username);
 }

@@ -10,11 +10,13 @@ class EventSlider extends StatefulWidget {
   const EventSlider({
     required this.event,
     required this.onClose,
+    this.onBookingChanged,
     super.key,
   });
 
   final Event event;
   final VoidCallback onClose;
+  final VoidCallback? onBookingChanged;
 
   @override
   State<EventSlider> createState() => _EventSliderState();
@@ -57,6 +59,7 @@ class _EventSliderState extends State<EventSlider> {
           event: widget.event,
           onClose: widget.onClose,
           scrollController: scrollController,
+          onBookingChanged: widget.onBookingChanged,
         );
       },
     );
@@ -69,11 +72,13 @@ class _EventContent extends StatelessWidget {
     required this.event,
     required this.onClose,
     required this.scrollController,
+    this.onBookingChanged,
   });
 
   final Event event;
   final VoidCallback onClose;
   final ScrollController scrollController;
+  final VoidCallback? onBookingChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +116,11 @@ class _EventContent extends StatelessWidget {
                       if (vm.venue == null) {
                         return const Center(child: Text('Venue information not found.'));
                       }
-                      return _EventDetails(event: vm.event, venue: vm.venue!);
+                      return _EventDetails(
+                          event: vm.event,
+                          venue: vm.venue!,
+                          onBookingChanged: onBookingChanged
+                      );
                     },
                   ),
                 ],
@@ -126,10 +135,11 @@ class _EventContent extends StatelessWidget {
 
 
 class _EventDetails extends StatelessWidget {
-  const _EventDetails({required this.event, required this.venue});
+  const _EventDetails({required this.event, required this.venue, this.onBookingChanged});
 
   final Event event;
   final Venue venue;
+  final VoidCallback? onBookingChanged;
 
   String _formatDate(DateTime dt) => "${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}";
   String _formatTimeRange(DateTime start, DateTime end) {
@@ -147,13 +157,29 @@ class _EventDetails extends StatelessWidget {
     final theme = Theme.of(context);
     final media = MediaQuery.of(context);
     const green = Color(0xFF31B179);
+    const red = Colors.red;
     final hp = media.size.width * 0.04;
     final spacing = media.size.height * 0.015;
     final iconSize = media.size.width * 0.06;
     final progress = (event.maxCapacity > 0) ? (event.booked / event.maxCapacity).clamp(0.0, 1.0) : 0.0;
 
     final bool isReserved = sliderVm.isReserved;
-    final bool canReserve = authNotifier.isLoggedIn && !isReserved;
+    final bool canInteract = authNotifier.isLoggedIn;
+
+    Color buttonColor;
+    String buttonText;
+
+    if (isReserved) {
+      buttonColor = red;
+      buttonText = 'Cancel Booking';
+    } else {
+      buttonColor = green;
+      buttonText = 'Reserve';
+    }
+
+    if (!canInteract) {
+      buttonColor = Colors.grey[400]!;
+    }
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: hp),
@@ -183,7 +209,7 @@ class _EventDetails extends StatelessWidget {
           ),
           SizedBox(height: spacing),
 
-          _InfoRow(icon: CupertinoIcons.number, text: 'Times booked', subText: '${venue.bookingCount}', iconSize: iconSize),
+          Text(event.description, style: theme.textTheme.bodyMedium, maxLines: 5, overflow: TextOverflow.ellipsis),
           SizedBox(height: spacing * 1.5),
 
           SizedBox(
@@ -191,27 +217,29 @@ class _EventDetails extends StatelessWidget {
             height: media.size.height * 0.06,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: canReserve ? green : Colors.grey[400], // Dynamic color
+                backgroundColor: buttonColor,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-
-              onPressed: (sliderVm.isBooking || !canReserve)
+              onPressed: (sliderVm.isBooking || !canInteract)
                   ? null
                   : () async {
-                await sliderVm.createBooking(authNotifier.user?.uid);
-                if (context.mounted) {
-                  if (sliderVm.error != null) {
+                final wasReserved = sliderVm.isReserved;
+                await sliderVm.handleBooking(authNotifier.user?.uid);
+
+                if (sliderVm.error != null && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(sliderVm.error!),
+                        backgroundColor: Colors.red),
+                  );
+                } else {
+                  onBookingChanged?.call();
+
+                  if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                          content: Text(sliderVm.error!),
-                          backgroundColor: Colors.red),
-                    );
-                  } else {
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Reservation Successful!'),
+                        content: Text(wasReserved ? 'Reservation Cancelled!' : 'Reservation Successful!'),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -225,7 +253,7 @@ class _EventDetails extends StatelessWidget {
                 child:
                 CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
               )
-                  : Text(isReserved ? 'Reserved' : 'Reserve'),
+                  : Text(buttonText),
             ),
           ),
           SizedBox(height: spacing * 2),

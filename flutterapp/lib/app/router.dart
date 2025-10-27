@@ -5,6 +5,8 @@ import '../presentation/login.dart';
 import '../presentation/main_view.dart';
 import '../presentation/register.dart';
 import 'auth_notifier.dart';
+import '../presentation/profile_update_view.dart';
+import '../model/models/user.dart';
 
 GoRouter createRouter(AuthNotifier authNotifier) {
   return GoRouter(
@@ -29,6 +31,19 @@ GoRouter createRouter(AuthNotifier authNotifier) {
       GoRoute(
         path: '/landing_page',
         builder: (context, state) => const LandingPage(),
+      ),
+      GoRoute(
+        path: '/profile_update_view',
+        builder: (context, state) {
+          // The User object is passed as an extra parameter
+          final user = state.extra as User?;
+          // If no user is passed, you might want to handle it gracefully
+          if (user == null) {
+            // For example, redirect back or show an error page
+            return const Scaffold(body: Center(child: Text("Error: No user data provided.")));
+          }
+          return ProfileUpdateView(user: user);
+        },
       ),
     ],
 
