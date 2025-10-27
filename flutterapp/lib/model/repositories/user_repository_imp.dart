@@ -34,4 +34,10 @@ class UserRepositoryImplementation implements UserRepository {
   Future<void> delete(String id) {
     return _dataSource.delete(id);
   }
+
+  @override
+  Future<User?> getUserByUsername(String username) {
+    return _dataSource.getUserByUsername(username);
+  }
+
 }

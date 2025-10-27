@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/presentation/map_view.dart';
-import 'package:flutterapp/presentation/viewModels/map_view_vm.dart'; // <-- Import MapViewVm
+import 'package:flutterapp/presentation/viewModels/map_view_vm.dart';
 import 'widgets/footer_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'viewModels/main_view_vm.dart';
+import 'profile_view.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});
@@ -35,7 +36,7 @@ class MainViewBody extends StatelessWidget {
       const MapView(),
       const Center(child: Text('Search Page')),
       const Center(child: Text('Add Event Page')),
-      const Center(child: Text('Profile Page')),
+      const ProfileView(),
     ];
 
     const items = [

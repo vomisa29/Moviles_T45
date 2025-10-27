@@ -67,6 +67,14 @@ class EventSliderVm extends ChangeNotifier {
     }
   }
 
+  Future<void> handleBooking(String? userId) async {
+    if (isReserved) {
+      await cancelBooking(userId);
+    } else {
+      await createBooking(userId);
+    }
+  }
+
   Future<void> createBooking(String? userId) async {
     _isBooking = true;
     _error = null;
@@ -81,6 +89,27 @@ class EventSliderVm extends ChangeNotifier {
       _isReserved = true;
     } else {
       _error = result.errorMessage;
+    }
+
+    _isBooking = false;
+    notifyListeners();
+  }
+
+  Future<void> cancelBooking(String? userId) async {
+    if (userId == null) {
+      _error = "User not logged in.";
+      notifyListeners();
+      return;
+    }
+    _isBooking = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _bookedRepo.cancelByUserIdAndEventId(userId: userId, eventId: event.id);
+      _isReserved = false;
+    } catch (e) {
+      _error = "Failed to cancel booking. Please try again.";
     }
 
     _isBooking = false;
