@@ -53,6 +53,7 @@ class UserFirestoreDs {
 
       username: data['username'] as String?,
       description: data['description'] as String?,
+      avatarUrl: data['avatar_url'] as String?,
 
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       sportList: data['sportList'] == null ? null : List<String>.from(data['sportList']),
@@ -76,6 +77,7 @@ class UserFirestoreDs {
       if (user.avgRating != null) 'avgRating': user.avgRating,
       if (user.numRating != null) 'numRating': user.numRating,
       if (user.assistanceRate != null) 'assistanceRate': user.assistanceRate,
+      if (user.avatarUrl != null) 'assistanceRate': user.avatarUrl,
     };
   }
 }

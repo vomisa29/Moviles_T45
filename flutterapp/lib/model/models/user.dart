@@ -32,6 +32,9 @@ class User {
   final double? avgRating;
   final int? numRating;
   final double? assistanceRate;
+  final String? avatarUrl;
+
+
 
   const User({
     required this.uid,
@@ -44,5 +47,6 @@ class User {
     this.avgRating,
     this.numRating,
     this.assistanceRate,
+    this.avatarUrl,
   });
 }

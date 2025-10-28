@@ -133,9 +133,9 @@ class ProfileView extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage('https://i.imgur.com/8soT2R2.jpeg'),
+                  backgroundImage: NetworkImage(user.avatarUrl ?? 'https://i.imgur.com/w3UEu8o.jpeg'),
                 ),
                 const SizedBox(width: 20),
                 Expanded(

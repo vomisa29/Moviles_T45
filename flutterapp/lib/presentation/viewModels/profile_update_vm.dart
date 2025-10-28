@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../model/models/user.dart';
 import '../../domain/useCases/useCase_update_profile.dart';
+import '../../domain/useCases/useCase_result.dart';
+
 
 class ProfileUpdateVm extends ChangeNotifier {
   final UpdateProfileUseCase _updateProfileUseCase;
@@ -23,7 +26,7 @@ class ProfileUpdateVm extends ChangeNotifier {
         descriptionController = TextEditingController(text: _initialUser.description);
 
   Future<void> updateUser(BuildContext context) async {
-    if (usernameController.text.isEmpty) {
+    if (usernameController.text.trim().isEmpty) {
       _showPopup(context, "Username cannot be empty.", isError: true);
       return;
     }
@@ -41,6 +44,7 @@ class ProfileUpdateVm extends ChangeNotifier {
       numRating: _initialUser.numRating,
       assistanceRate: _initialUser.assistanceRate,
       createdAt: _initialUser.createdAt,
+      avatarUrl: _initialUser.avatarUrl,
     );
 
     final result = await _updateProfileUseCase.execute(
@@ -69,7 +73,16 @@ class ProfileUpdateVm extends ChangeNotifier {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(isError ? "Error" : "Success"),
+          title: Row(
+            children: [
+              Icon(
+                isError ? CupertinoIcons.xmark_circle_fill : CupertinoIcons.check_mark_circled_solid,
+                color: isError ? Colors.red : Colors.green,
+              ),
+              const SizedBox(width: 10),
+              Text(isError ? "Error" : "Success"),
+            ],
+          ),
           content: Text(message),
           actions: <Widget>[
             TextButton(

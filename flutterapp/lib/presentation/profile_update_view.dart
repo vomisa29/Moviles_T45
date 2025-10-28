@@ -78,7 +78,7 @@ class ProfileUpdateView extends StatelessWidget {
                   textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 onPressed: () => vm.updateUser(context),
-                child: const Text("Create Account"),
+                child: const Text("Update Profile"),
               ),
             ),
           ],
@@ -120,9 +120,20 @@ class ProfileUpdateView extends StatelessWidget {
     return Container(
       color: Colors.black.withOpacity(0.5),
       child: const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+            SizedBox(height: 16),
+            Text(
+              "Updating user...",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ],
         ),
+
       ),
     );
   }
