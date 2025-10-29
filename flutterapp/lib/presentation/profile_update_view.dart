@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../model/models/user.dart';
+import 'viewModels/main_view_vm.dart';
 import 'viewModels/profile_update_vm.dart';
 
 class ProfileUpdateView extends StatelessWidget {
@@ -31,6 +32,7 @@ class ProfileUpdateView extends StatelessWidget {
 
   Widget _buildForm(BuildContext context, ProfileUpdateVm vm) {
     final theme = Theme.of(context).textTheme;
+    final isConnected = context.watch<MainViewVm>().isConnected;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -44,7 +46,7 @@ class ProfileUpdateView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              "Configure Profile",
+              "Edit Profile",
               style: theme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 32),
@@ -71,16 +73,26 @@ class ProfileUpdateView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF38B480),
+                  backgroundColor: isConnected ? const Color(0xFF38B480) : Colors.grey,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                onPressed: () => vm.updateUser(context),
+                onPressed: isConnected ? () => vm.updateUser(context) : null,
                 child: const Text("Update Profile"),
               ),
             ),
+            if (!isConnected)
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Center(
+                  child: Text(
+                    "Internet connection required to update your profile.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -133,8 +145,8 @@ class ProfileUpdateView extends StatelessWidget {
             ),
           ],
         ),
-
       ),
     );
   }
 }
+

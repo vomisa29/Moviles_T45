@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/app/auth_notifier.dart';
 import 'package:provider/provider.dart';
-
 import '../model/models/event.dart';
 import '../model/models/venue.dart';
 import 'viewModels/create_event_vm.dart';
+import 'viewModels/main_view_vm.dart';
 
 class CreateEventView extends StatelessWidget {
   const CreateEventView({super.key});
@@ -34,6 +34,8 @@ class CreateEventView extends StatelessWidget {
   Widget _buildBody(BuildContext context, CreateEventVm vm) {
     final theme = Theme.of(context).textTheme;
     final authNotifier = context.read<AuthNotifier>();
+    final mainVm = context.watch<MainViewVm>();
+    final isConnected = mainVm.isConnected;
 
     if (vm.state == CreateEventState.error) {
       return const Center(
@@ -88,13 +90,13 @@ class CreateEventView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF38B480),
+                  backgroundColor: isConnected ? const Color(0xFF38B480) : Colors.grey,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                onPressed: () {
+                onPressed: isConnected ? () {
                   final organizerId = authNotifier.user?.uid;
                   if (organizerId != null) {
                     vm.createEvent(context, organizerId);
@@ -103,10 +105,20 @@ class CreateEventView extends StatelessWidget {
                       const SnackBar(content: Text("You must be logged in to create an event."), backgroundColor: Colors.red),
                     );
                   }
-                },
+                } : null,
                 child: const Text("Create Event"),
               ),
             ),
+            if (!isConnected)
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Center(
+                  child: Text(
+                    "Internet connection required to create an event.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
