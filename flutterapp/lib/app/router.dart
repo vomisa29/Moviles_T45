@@ -35,11 +35,8 @@ GoRouter createRouter(AuthNotifier authNotifier) {
       GoRoute(
         path: '/profile_update_view',
         builder: (context, state) {
-          // The User object is passed as an extra parameter
           final user = state.extra as User?;
-          // If no user is passed, you might want to handle it gracefully
           if (user == null) {
-            // For example, redirect back or show an error page
             return const Scaffold(body: Center(child: Text("Error: No user data provided.")));
           }
           return ProfileUpdateView(user: user);

@@ -6,6 +6,8 @@ import 'app/router.dart';
 import 'app/auth_notifier.dart';
 import 'package:go_router/go_router.dart';
 import 'app/connectivity_notifier.dart';
+// Import MainViewVm to use it in the provider
+import 'presentation/viewModels/main_view_vm.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +21,7 @@ void main() async {
   }
 
   final authNotifier = AuthNotifier();
-  final connectivityNotifier = ConnectivityNotifier();
+  // We don't need to assign connectivityNotifier to a variable here anymore
 
   final router = createRouter(authNotifier);
 
@@ -27,7 +29,14 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: authNotifier),
-        ChangeNotifierProvider.value(value: connectivityNotifier),
+        // 1. Provide ConnectivityNotifier
+        ChangeNotifierProvider(create: (_) => ConnectivityNotifier()),
+        // 2. Use ProxyProvider to create/update MainViewVm when ConnectivityNotifier changes
+        ChangeNotifierProxyProvider<ConnectivityNotifier, MainViewVm>(
+          create: (context) => MainViewVm(context.read<ConnectivityNotifier>()),
+          update: (context, connectivity, previousVm) =>
+          previousVm!..updateConnectivity(connectivity),
+        ),
       ],
       child: MyApp(router: router),
     ),

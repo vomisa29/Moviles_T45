@@ -7,33 +7,45 @@ import 'package:flutter/cupertino.dart';
 import 'viewModels/main_view_vm.dart';
 import 'profile_view.dart';
 import 'create_event_view.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => MainViewVm()),
-        ChangeNotifierProvider(create: (_) => MapViewVm()),
-      ],
+    return ChangeNotifierProvider(
+      create: (_) => MapViewVm(),
       child: const MainViewBody(),
     );
   }
 }
 
-class MainViewBody extends StatelessWidget {
+class MainViewBody extends StatefulWidget {
   const MainViewBody({super.key});
 
   @override
+  State<MainViewBody> createState() => _MainViewBodyState();
+}
+
+class _MainViewBodyState extends State<MainViewBody> {
+
+  @override
   Widget build(BuildContext context) {
-    final mainVm = context.read<MainViewVm>();
-    final selectedIndex = context.watch<MainViewVm>().selectedIndex;
+    final mainVm = context.watch<MainViewVm>();
 
+    if (mainVm.showConnectionStatus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showConnectivitySnackBar(mainVm.isConnected);
+          mainVm.snackbarShown();
+        }
+      });
+    }
+
+    final selectedIndex = mainVm.selectedIndex;
     final List<Widget> pages = <Widget>[
-
       const MapView(),
       const Center(child: Text('Search Page')),
       const CreateEventView(),
@@ -49,10 +61,35 @@ class MainViewBody extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: PageView(
-        controller: mainVm.pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: pages,
+      body: SafeArea(
+        child: Column(
+          children: [
+            if (!mainVm.isConnected)
+              Container(
+                width: double.infinity,
+                color: Colors.red.withOpacity(0.9),
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(CupertinoIcons.wifi_slash, color: Colors.white, size: 16),
+                    SizedBox(width: 8),
+                    Text(
+                      'No Internet Connection',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            Expanded(
+              child: PageView(
+                controller: mainVm.pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: pages,
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: FooterBar(
         items: items,
@@ -61,4 +98,18 @@ class MainViewBody extends StatelessWidget {
       ),
     );
   }
+
+  void _showConnectivitySnackBar(bool isConnected) {
+    if (!mounted) return;
+    if (isConnected) {
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.success(
+          message: "You are back online!",
+        ),
+      );
+    }
+  }
 }
+
+

@@ -47,6 +47,10 @@ dependencies:
   firebase_performance: ^0.11.1
   show_hide_password: ^0.0.2
   internet_connection_checker_plus: ^2.9.0
+  top_snackbar_flutter: ^3.3.0
+  flutter_cache_manager: ^3.4.1
+  cached_network_image: ^3.4.1
+
   flutter_localizations:
     sdk: flutter
   intl: any

@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';import 'package:flutter/material.dart';
 import 'package:flutterapp/model/models/venue.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'event_slider.dart';
+import 'viewModels/main_view_vm.dart'; // Import MainViewVm
 import 'viewModels/map_view_vm.dart';
 import 'widgets/venues_list_sheet.dart';
 
@@ -12,6 +12,21 @@ class MapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isConnected = context.watch<MainViewVm>().isConnected;
+
+    if (!isConnected) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Text(
+            "No internet connection. Please check your connection to use the map.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+      );
+    }
+
     return const MapViewBody();
   }
 }
