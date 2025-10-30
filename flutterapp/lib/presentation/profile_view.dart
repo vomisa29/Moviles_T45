@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../app/auth_notifier.dart';
 import '../model/models/event.dart';
 import 'event_slider.dart';
+import 'viewModels/main_view_vm.dart';
 import 'viewModels/profile_view_vm.dart';
 
 class ProfileView extends StatelessWidget {
@@ -77,6 +78,7 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildNotConfiguredView(BuildContext context, ProfileViewVm vm) {
+    final isConnected = context.watch<MainViewVm>().isConnected;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -91,15 +93,25 @@ class ProfileView extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF38B480),
+                backgroundColor: isConnected ? const Color(0xFF38B480) : Colors.grey,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              onPressed: () => vm.navigateToConfiguration(context),
+              onPressed: isConnected ? () => vm.navigateToConfiguration(context) : null,
               child: const Text("Configure now!"),
             ),
+            if (!isConnected)
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Center(
+                  child: Text(
+                    "Internet connection required to configure your profile.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -110,6 +122,7 @@ class ProfileView extends StatelessWidget {
     final theme = Theme.of(context).textTheme;
     const greenColor = Color(0xFF38B480);
     final user = vm.user!;
+    final isConnected = context.watch<MainViewVm>().isConnected;
 
     return SingleChildScrollView(
       child: Padding(
@@ -133,9 +146,9 @@ class ProfileView extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage('https://i.imgur.com/8soT2R2.jpeg'),
+                  backgroundImage: NetworkImage(user.avatarUrl ?? 'https://i.imgur.com/w3UEu8o.jpeg'),
                 ),
                 const SizedBox(width: 20),
                 Expanded(
@@ -175,16 +188,26 @@ class ProfileView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: greenColor,
+                  backgroundColor: isConnected ? greenColor : Colors.grey,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                onPressed: () => vm.navigateToConfiguration(context),
+                onPressed: isConnected ? () => vm.navigateToConfiguration(context) : null,
                 child: const Text("Edit Profile"),
               ),
             ),
+            if (!isConnected)
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Center(
+                  child: Text(
+                    "Internet connection required to edit your profile.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ),
             const SizedBox(height: 32),
             Text("Upcoming Events", style: theme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
@@ -301,3 +324,4 @@ class ProfileView extends StatelessWidget {
     );
   }
 }
+

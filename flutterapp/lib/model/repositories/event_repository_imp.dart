@@ -75,6 +75,16 @@ class EventRepositoryImplementation implements EventRepository {
   }
 
   @override
+  Future<List<Event>> getOverlappingEvents({required String venueId,
+    required DateTime startTime,
+    required DateTime endTime}) async {
+    return _dataSource.getOverlappingEvents(
+      venueId: venueId,
+      startTime: startTime,
+      endTime: endTime,);
+  }
+
+  @override
   Future<void> update(Event event) async {
     await _dataSource.update(event);
   }
