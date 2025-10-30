@@ -8,6 +8,9 @@ class EventFirestoreDs {
   CollectionReference<Map<String, dynamic>> get _col =>
       FirebaseFirestore.instance.collection('events');
 
+  CollectionReference<Map<String, dynamic>> get _usersCol =>
+      FirebaseFirestore.instance.collection('users');
+
   String generateId() => _col.doc().id;
 
   Future<Event?> getOne(String id) async {
@@ -21,8 +24,35 @@ class EventFirestoreDs {
     return q.docs.map((d) => _fromFirestore(d)).toList(growable: false);
   }
 
-  Future<void> create(Event event) async {
-    await _col.doc(event.id).set(_toJson(event));
+  Future<List<Event>> getByOrganizer(String organizerid) async {
+    final organizerRef = _usersCol.doc(organizerid);
+    final q = await _col.where('organizerid', isEqualTo: organizerRef).get();
+
+    return q.docs.map((d) => _fromFirestore(d)).toList(growable: false);
+  }
+
+  Future<List<Event>> getOverlappingEvents(
+      {required String venueId,
+        required DateTime startTime,
+        required DateTime endTime}) async {
+
+    final venueRef = FirebaseFirestore.instance.collection('venues').doc(venueId);
+
+    final query = await _col
+        .where('venueid', isEqualTo: venueRef)
+        .where('start_time', isLessThan: endTime)
+        .get();
+
+    return query.docs
+        .map((d) => _fromFirestore(d))
+        .where((event) => event.endTime.isAfter(startTime))
+        .toList();
+  }
+
+  Future<String> create(Event event) async {
+    final docRef = _col.doc();
+    await docRef.set(_toJson(event));
+    return docRef.id;
   }
 
   Future<void> update(Event event) async {

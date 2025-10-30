@@ -14,4 +14,6 @@ abstract class BookedEventRepository {
   Future<void> delete(String docId);
 
   Future<bool> isEventBookedByUser({required String userId, required String eventId});
+
+  Future<void> cancelByUserIdAndEventId({required String userId, required String eventId});
 }

@@ -36,6 +36,10 @@ class BookedEventRepositoryImplementation implements BookedEventRepository {
   @override
   Future<bool> isEventBookedByUser({required String userId, required String eventId}) {
     return _dataSource.isEventBookedByUser(userId: userId, eventId: eventId);
+  }
 
+  @override
+  Future<void> cancelByUserIdAndEventId({required String userId, required String eventId}) {
+    return _dataSource.cancelByUserIdAndEventId(userId: userId, eventId: eventId);
   }
 }

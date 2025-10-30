@@ -8,6 +8,12 @@ class BookedFirestoreDs {
   CollectionReference<Map<String, dynamic>> get _col =>
       FirebaseFirestore.instance.collection('booked');
 
+  CollectionReference<Map<String, dynamic>> get _usersCol =>
+      FirebaseFirestore.instance.collection('users');
+
+  CollectionReference<Map<String, dynamic>> get _eventsCol =>
+      FirebaseFirestore.instance.collection('events');
+
   Future<BookedEvent?> getOne(String docId) async {
     final snap = await _col.doc(docId).get();
     if (!snap.exists || snap.data() == null) return null;
@@ -69,6 +75,24 @@ class BookedFirestoreDs {
         .get();
 
     return querySnapshot.docs.isNotEmpty;
+  }
+
+  Future<void> cancelByUserIdAndEventId({required String userId, required String eventId}) async {
+    final userRef = _usersCol.doc(userId);
+    final eventRef = _eventsCol.doc(eventId);
+
+    final querySnapshot = await _col
+        .where('userid', isEqualTo: userRef)
+        .where('eventid', isEqualTo: eventRef)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final docId = querySnapshot.docs.first.id;
+      await _col.doc(docId).delete();
+    } else {
+      throw Exception("No booking found for the given user and event.");
+    }
   }
 
 

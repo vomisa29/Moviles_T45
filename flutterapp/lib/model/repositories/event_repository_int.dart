@@ -6,15 +6,23 @@ abstract class EventRepository {
 
   Future<Event?> getOne(String id);
 
+  Future<List<Event>> getByOrganizer(String organizerid);
+
   Future<String> create(Event event);
 
   Future<void> update(Event event);
 
   Future<void> delete(String id);
 
+  Future<List<Event>> getOverlappingEvents({required String venueId,
+    required DateTime startTime,
+    required DateTime endTime});
+
+}
+
+
   /*Future<List<Event>> getNearby({
     required double latitude,
     required double longitude,
     double radiusKm = 10.0,
   });*/
-}
