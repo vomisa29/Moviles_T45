@@ -4,33 +4,35 @@ import 'package:flutterapp/presentation/viewModels/login_vm.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
+import 'dart:developer';
+
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  Widget build(BuildContext context) {
+    return _LoginPageState();
+  }
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends StatelessWidget{
+  _LoginPageState();
 
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-
-  final logicVM = LoginVm();  
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
-  void dispose(){
-    super.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+
+    final LoginVm loginVm = LoginVm();
+    
+    return ChangeNotifierProvider(
+      create: (context) => loginVm,
+      child: Scaffold(
       //Most of the structure is here
       body:Center(
         child: Padding(
@@ -71,7 +73,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 26),
                   ElevatedButton(
-                    onPressed: () => _loginButtonAction(context),
+                    onPressed: (){
+                        loginVm.login(_emailController.text, _passwordController.text);
+                        _loginButtonAction(context,loginVm.error,loginVm.errorMessage);
+                      },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 49, 177, 121),
                     ),
@@ -131,18 +136,19 @@ class _LoginPageState extends State<LoginPage> {
           )
       ),
       backgroundColor: const Color.fromARGB(255, 255, 252, 249),
+      ),
     );
   }
 
-  Future<void> _loginButtonAction(BuildContext context) async{
-    bool logged = await logicVM.login(_emailController.text, _passwordController.text, context);
-
-    if (!logged){
+  Future<void> _loginButtonAction(BuildContext context, bool error, String errorMessage) async{
+    
+    if (error){
+      log(errorMessage);
       return showDialog(
           context: context,
           builder: (context){
             return AlertDialog(
-              title: Text("Something went wrong...  :("),
+              title: Text(errorMessage),
               actions: [
                 ElevatedButton(
                     onPressed: () => Navigator.pop(context, 'OK'),
