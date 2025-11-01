@@ -31,6 +31,11 @@ class EventFirestoreDs {
     return q.docs.map((d) => _fromFirestore(d)).toList(growable: false);
   }
 
+  Future<List<Event>> getByName(String eventName) async {
+    final q = await _col.where('name', isEqualTo: eventName).get();
+    return q.docs.map((d) => _fromFirestore(d)).toList(growable: false);
+  }
+
   Future<List<Event>> getOverlappingEvents(
       {required String venueId,
         required DateTime startTime,

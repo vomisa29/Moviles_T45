@@ -20,6 +20,8 @@ class _EventSearchState extends StatelessWidget{
 
   final EventSearchVm eventSearchVm = EventSearchVm();
 
+  final _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,9 +33,15 @@ class _EventSearchState extends StatelessWidget{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 8),
-              
-              // 🔍 Search bar
+
+              //Search Bar
               TextField(
+                onSubmitted: (value) {
+                  
+                },
+                inputFormatters: [
+                        LengthLimitingTextInputFormatter(30),
+                ],
                 decoration: InputDecoration(
                   hintText: "Search for an event",
                   prefixIcon: const Icon(Icons.search),
@@ -44,6 +52,7 @@ class _EventSearchState extends StatelessWidget{
                     borderSide: BorderSide.none,
                   ),
                 ),
+                controller: _searchController,
               ),
 
               const SizedBox(height: 24),
