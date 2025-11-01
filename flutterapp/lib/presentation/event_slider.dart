@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../app/auth_notifier.dart';
 import '../model/models/event.dart';
 import '../model/models/venue.dart';
+import 'viewModels/main_view_vm.dart';
 import 'viewModels/event_slider_vm.dart';
 
 class EventSlider extends StatefulWidget {
@@ -153,6 +154,8 @@ class _EventDetails extends StatelessWidget {
 
     final sliderVm = context.watch<EventSliderVm>();
     final authNotifier = context.watch<AuthNotifier>();
+    final mainVm = context.watch<MainViewVm>();
+    final isConnected = mainVm.isConnected;
 
     final theme = Theme.of(context);
     final media = MediaQuery.of(context);
@@ -177,7 +180,7 @@ class _EventDetails extends StatelessWidget {
       buttonText = 'Reserve';
     }
 
-    if (!canInteract) {
+    if (!canInteract || !isConnected) {
       buttonColor = Colors.grey[400]!;
     }
 
@@ -221,7 +224,8 @@ class _EventDetails extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              onPressed: (sliderVm.isBooking || !canInteract)
+
+              onPressed: (sliderVm.isBooking || !canInteract || !isConnected)
                   ? null
                   : () async {
                 final wasReserved = sliderVm.isReserved;
@@ -256,6 +260,16 @@ class _EventDetails extends StatelessWidget {
                   : Text(buttonText),
             ),
           ),
+          if (!isConnected)
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Center(
+                child: Text(
+                  "Internet connection required to manage your booking.",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ),
           SizedBox(height: spacing * 2),
         ],
       ),
