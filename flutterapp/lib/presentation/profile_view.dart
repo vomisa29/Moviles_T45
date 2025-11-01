@@ -8,6 +8,7 @@ import '../model/models/event.dart';
 import 'event_slider.dart';
 import 'viewModels/main_view_vm.dart';
 import 'viewModels/profile_view_vm.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -148,7 +149,7 @@ class ProfileView extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(user.avatarUrl ?? 'https://i.imgur.com/w3UEu8o.jpeg'),
+                  backgroundImage: CachedNetworkImageProvider(user.avatarUrl ?? 'https://i.imgur.com/w3UEu8o.jpeg'),
                 ),
                 const SizedBox(width: 20),
                 Expanded(
