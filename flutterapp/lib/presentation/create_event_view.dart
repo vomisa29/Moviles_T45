@@ -7,27 +7,38 @@ import '../model/models/venue.dart';
 import 'viewModels/create_event_vm.dart';
 import 'viewModels/main_view_vm.dart';
 
-class CreateEventView extends StatelessWidget {
+class CreateEventView extends StatefulWidget {
   const CreateEventView({super.key});
 
   @override
+  State<CreateEventView> createState() => _CreateEventViewState();
+}
+
+class _CreateEventViewState extends State<CreateEventView> {
+  @override
+  void dispose() {
+
+    if (mounted) {
+      context.read<CreateEventVm>().saveToCache();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => CreateEventVm(),
-      child: Consumer<CreateEventVm>(
-        builder: (context, vm, _) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFCFBF8),
-            body: Stack(
-              children: [
-                _buildBody(context, vm),
-                if (vm.state == CreateEventState.loading || vm.state == CreateEventState.submitting)
-                  _buildLoadingOverlay(vm.state),
-              ],
-            ),
-          );
-        },
-      ),
+    return Consumer<CreateEventVm>(
+      builder: (context, vm, _) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFCFBF8),
+          body: Stack(
+            children: [
+              _buildBody(context, vm),
+              if (vm.state == CreateEventState.loading || vm.state == CreateEventState.submitting)
+                _buildLoadingOverlay(vm.state),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -48,7 +59,6 @@ class CreateEventView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const SizedBox(height: 16),
             Text(
               "Create Event",
@@ -142,7 +152,9 @@ class CreateEventView extends StatelessWidget {
 
     final dateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
     controller.text = dateTime.toIso8601String();
-    (context as Element).markNeedsBuild();
+    if(mounted){
+      (context as Element).markNeedsBuild();
+    }
   }
 
   Widget _buildDateTimePicker(BuildContext context, TextEditingController controller, String label) {
