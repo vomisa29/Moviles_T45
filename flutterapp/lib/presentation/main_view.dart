@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/presentation/event_search.dart';
 import 'package:flutterapp/presentation/map_view.dart';
 import 'package:flutterapp/presentation/viewModels/map_view_vm.dart';
+import 'package:flutterapp/presentation/viewModels/create_event_vm.dart'; // Import CreateEventVm
 import 'widgets/footer_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,8 +17,11 @@ class MainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => MapViewVm(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => MapViewVm()),
+        ChangeNotifierProvider(create: (_) => CreateEventVm()), // Hoist CreateEventVm here
+      ],
       child: const MainViewBody(),
     );
   }
