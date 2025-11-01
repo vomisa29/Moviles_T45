@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/presentation/viewModels/register_vm.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -12,7 +13,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final registerVM = RegisterVm();
+  final RegisterVm registerVm = RegisterVm();
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -26,7 +27,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ChangeNotifierProvider(
+      create: (context) => registerVm,
+      child: Scaffold(
       body:Center(
         child: Padding(
           padding: const EdgeInsets.all(30.0),
@@ -35,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset("lib/assets/Logo_app_SportLink.png",height: 400),
+                  Image.asset("lib/assets/Logo_app_SportLink.png",height: 300),
                   SizedBox(height: 26),
                   TextField(
                     inputFormatters: [
@@ -66,7 +69,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   SizedBox(height: 26),
                   ElevatedButton(
-                    onPressed: () => _registerButtonAction(context),
+                    onPressed: (){
+                      _register(context,_emailController.text, _passwordController.text,registerVm);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 49, 177, 121),
                       textStyle: TextStyle(
@@ -118,18 +123,22 @@ class _RegisterPageState extends State<RegisterPage> {
           )
       ),
       backgroundColor: const Color.fromARGB(255, 255, 252, 249),
+      ),
     );
   }
 
-  Future<void> _registerButtonAction(BuildContext context) async{
-    bool registered = await registerVM.register(_emailController.text, _passwordController.text, context);
+  void _register(BuildContext context, email, String password, RegisterVm registerVm) async{
+    await registerVm.register(_emailController.text, _passwordController.text);
+    _registerButtonAction(context,registerVm.error,registerVm.errorMessage);
+  }
 
-    if (!registered){
+  Future<void> _registerButtonAction(BuildContext context, bool error, String? errorMessage) async{
+    if (error){
       return showDialog(
           context: context,
           builder: (context){
             return AlertDialog(
-              title: Text("Something went wrong...  :("),
+              title: Text(errorMessage ?? "Something went wrong :("),
               actions: [
                 ElevatedButton(
                     onPressed: () => Navigator.pop(context, 'OK'),

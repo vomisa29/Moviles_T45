@@ -573,6 +573,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.20.2"
+  is_valid:
+    dependency: "direct main"
+    description:
+      name: is_valid
+      sha256: "5d3c399977298a4a2ad8ecc9674189f83aa795de31fae8492f56c1e8dca130fe"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.8"
   json_annotation:
     dependency: transitive
     description:
