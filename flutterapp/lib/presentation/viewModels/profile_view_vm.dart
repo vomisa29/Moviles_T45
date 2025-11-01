@@ -25,11 +25,14 @@ class ProfileViewVm extends ChangeNotifier {
   ProfileState _state = ProfileState.loading;
   String? _errorMessage;
 
+  bool _isLoadingEvents = false;
+
   User? get user => _user;
   List<Event> get upcomingEvents => _upcomingEvents;
   List<Event> get postedEvents => _postedEvents;
   ProfileState get state => _state;
   String? get errorMessage => _errorMessage;
+  bool get isLoadingEvents => _isLoadingEvents;
 
   ProfileViewVm(this._userId)
       : _userRepository = UserRepositoryImplementation(),
@@ -40,7 +43,6 @@ class ProfileViewVm extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
-
     await _authService.signOut();
   }
 
@@ -54,42 +56,60 @@ class ProfileViewVm extends ChangeNotifier {
       if (_user == null) {
         _state = ProfileState.error;
         _errorMessage = "User not found.";
-      } else if (_user!.username == null || _user!.username!.isEmpty) {
-        _state = ProfileState.notConfigured;
-      } else {
-        await _fetchUserEvents();
-        _state = ProfileState.ready;
+        notifyListeners();
+        return;
       }
+
+      if (_user!.username == null || _user!.username!.isEmpty) {
+        _state = ProfileState.notConfigured;
+        notifyListeners();
+        return;
+      }
+
+      _state = ProfileState.ready;
+      notifyListeners();
+
+      _fetchUserEvents();
+
     } catch (e) {
       _state = ProfileState.error;
       _errorMessage = "An error occurred while fetching data: $e";
-    } finally {
-      if (hasListeners) {
-        notifyListeners();
-      }
+      notifyListeners();
     }
   }
 
   Future<void> _fetchUserEvents() async {
-    final bookings = await _bookedRepository.getBookingsForUser(_userId);
-    final upcomingEventIds = bookings.map((b) => b.eventId).toList();
+    _isLoadingEvents = true;
+    notifyListeners();
 
-    if (upcomingEventIds.isNotEmpty) {
-      final events = <Event>[];
-      for (var eventId in upcomingEventIds) {
-        final event = await _eventRepository.getOne(eventId);
-        if (event != null) {
-          events.add(event);
+    try {
+      final bookings = await _bookedRepository.getBookingsForUser(_userId);
+      final upcomingEventIds = bookings.map((b) => b.eventId).toList();
+
+      if (upcomingEventIds.isNotEmpty) {
+        final events = <Event>[];
+        for (var eventId in upcomingEventIds) {
+          final event = await _eventRepository.getOne(eventId);
+          if (event != null) {
+            events.add(event);
+          }
         }
+        events.sort((a, b) => a.startTime.compareTo(b.startTime));
+        _upcomingEvents = events;
+      } else {
+        _upcomingEvents = [];
       }
-      events.sort((a, b) => a.startTime.compareTo(b.startTime));
-      _upcomingEvents = events;
-    } else {
-      _upcomingEvents = [];
-    }
 
-    _postedEvents = await _eventRepository.getByOrganizer(_userId);
-    _postedEvents.sort((a, b) => a.startTime.compareTo(b.startTime));
+      _postedEvents = await _eventRepository.getByOrganizer(_userId);
+      _postedEvents.sort((a, b) => a.startTime.compareTo(b.startTime));
+    } catch (e) {
+      debugPrint("Error fetching events: $e");
+      _upcomingEvents = [];
+      _postedEvents = [];
+    } finally {
+      _isLoadingEvents = false;
+      notifyListeners();
+    }
   }
 
   void navigateToConfiguration(BuildContext context) {
