@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import '../app/auth_notifier.dart';
 import '../model/models/event.dart';
 import 'event_slider.dart';
@@ -68,7 +67,7 @@ class ProfileView extends StatelessWidget {
                 return _buildNotConfiguredView(context, vm);
               case ProfileState.ready:
                 if (vm.user == null) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: Text("Could not load user profile."));
                 }
                 return _buildProfileReadyView(context, vm);
             }
@@ -149,6 +148,7 @@ class ProfileView extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 50,
+                  backgroundColor: Colors.grey[200],
                   backgroundImage: CachedNetworkImageProvider(user.avatarUrl ?? 'https://i.imgur.com/w3UEu8o.jpeg'),
                 ),
                 const SizedBox(width: 20),
@@ -158,11 +158,12 @@ class ProfileView extends StatelessWidget {
                     children: [
                       Text(user.username!, style: theme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: user.sportList!.map((sport) => _buildChip(sport, _getSportIcon(sport))).toList(),
-                      ),
+                      if (user.sportList != null)
+                        Wrap(
+                          spacing: 8.0,
+                          runSpacing: 4.0,
+                          children: user.sportList!.map((sport) => _buildChip(sport, _getSportIcon(sport))).toList(),
+                        ),
                       const SizedBox(height: 8),
                       if (user.avgRating != null)
                         _buildStarRating(user.avgRating!)
@@ -175,10 +176,11 @@ class ProfileView extends StatelessWidget {
                           ),
                         ),
                       const SizedBox(height: 8),
-                      Text(
-                        user.description!,
-                        style: theme.bodyMedium?.copyWith(color: Colors.grey[700]),
-                      ),
+                      if(user.description != null)
+                        Text(
+                          user.description!,
+                          style: theme.bodyMedium?.copyWith(color: Colors.grey[700]),
+                        ),
                     ],
                   ),
                 ),
@@ -212,11 +214,20 @@ class ProfileView extends StatelessWidget {
             const SizedBox(height: 32),
             Text("Upcoming Events", style: theme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            _buildEventsList(context, vm.upcomingEvents, greenColor, "You don't have any upcoming events."),
+            if (vm.isLoadingEvents)
+              const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()))
+            else
+              _buildEventsList(context, vm.upcomingEvents, greenColor, "You don't have any upcoming events."),
+
             const SizedBox(height: 32),
             Text("Posted Events", style: theme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            _buildEventsList(context, vm.postedEvents, greenColor, "You haven't posted any events yet."),
+
+            if (vm.isLoadingEvents)
+              const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()))
+            else
+              _buildEventsList(context, vm.postedEvents, greenColor, "You haven't posted any events yet."),
+
           ],
         ),
       ),
@@ -325,4 +336,3 @@ class ProfileView extends StatelessWidget {
     );
   }
 }
-
