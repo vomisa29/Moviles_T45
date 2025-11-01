@@ -15,9 +15,7 @@ class LoginVm with ChangeNotifier {
   String _errorMessage = "";
   String get errorMessage => _errorMessage;
 
-  LoginVm();
-
-  Future<void> login(email,password) async{
+  Future<void> login(String email,String password) async{
 
     final bool isConnected = await InternetConnection().hasInternetAccess;
     if(isConnected){

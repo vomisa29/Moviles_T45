@@ -42,7 +42,7 @@ class _LoginPageState extends StatelessWidget{
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset("lib/assets/Logo_app_SportLink.png",height: 400),
+                  Image.asset("lib/assets/Logo_app_SportLink.png",height: 300),
                   SizedBox(height: 26),
                   TextField(
                     inputFormatters: [
@@ -74,8 +74,7 @@ class _LoginPageState extends StatelessWidget{
                   SizedBox(height: 26),
                   ElevatedButton(
                     onPressed: (){
-                        loginVm.login(_emailController.text, _passwordController.text);
-                        _loginButtonAction(context,loginVm.error,loginVm.errorMessage);
+                        _login(context,_emailController.text, _passwordController.text,loginVm);
                       },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 49, 177, 121),
@@ -139,6 +138,12 @@ class _LoginPageState extends StatelessWidget{
       ),
     );
   }
+
+  void _login(BuildContext context, email, String password, LoginVm loginVm) async{
+    await loginVm.login(_emailController.text, _passwordController.text);
+    _loginButtonAction(context,loginVm.error,loginVm.errorMessage);
+  }
+
 
   Future<void> _loginButtonAction(BuildContext context, bool error, String errorMessage) async{
     
