@@ -19,7 +19,6 @@ class LoginVm with ChangeNotifier {
 
     final bool isConnected = await InternetConnection().hasInternetAccess;
     if(isConnected){
-      //Only tries lo login if there's an Internet Connection
       await FirebaseAnalytics.instance.logEvent(
       name: 'petition_login',
       parameters: {
@@ -32,7 +31,6 @@ class LoginVm with ChangeNotifier {
         log("User created succesfully");
         _error = false;
       }
-      //Failed the login process
       
       _error=true;
       notifyListeners();
