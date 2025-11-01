@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -211,17 +212,11 @@ class ProfileView extends StatelessWidget {
             const SizedBox(height: 32),
             Text("Upcoming Events", style: theme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            // NEW: Use the isLoadingEvents flag
-            vm.isLoadingEvents
-                ? const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()))
-                : _buildEventsList(context, vm.upcomingEvents, greenColor, "You don't have any upcoming events."),
+            _buildEventsList(context, vm.upcomingEvents, greenColor, "You don't have any upcoming events."),
             const SizedBox(height: 32),
             Text("Posted Events", style: theme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            // NEW: Use the isLoadingEvents flag
-            vm.isLoadingEvents
-                ? const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()))
-                : _buildEventsList(context, vm.postedEvents, greenColor, "You haven't posted any events yet."),
+            _buildEventsList(context, vm.postedEvents, greenColor, "You haven't posted any events yet."),
           ],
         ),
       ),
