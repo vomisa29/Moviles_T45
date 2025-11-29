@@ -8,6 +8,8 @@ abstract class EventRepository {
 
   Future<List<Event>> getByOrganizer(String organizerid);
 
+  Future<List<Event>> getByName(String eventName);
+
   Future<String> create(Event event);
 
   Future<void> update(Event event);

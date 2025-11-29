@@ -44,7 +44,7 @@ class RegisterVm with ChangeNotifier{
         notifyListeners();
         log("Registration failed: ${result.errorMessage}");
       }else{
-        _errorMessage = result.errorMessage;;
+        _errorMessage = result.errorMessage;
         notifyListeners();
       }
     }else{

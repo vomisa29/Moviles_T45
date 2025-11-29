@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/presentation/event_search.dart';
 import 'package:flutterapp/presentation/map_view.dart';
 import 'package:flutterapp/presentation/viewModels/map_view_vm.dart';
 import 'package:flutterapp/presentation/viewModels/create_event_vm.dart'; // Import CreateEventVm
@@ -51,7 +52,7 @@ class _MainViewBodyState extends State<MainViewBody> {
     final selectedIndex = mainVm.selectedIndex;
     final List<Widget> pages = <Widget>[
       const MapView(),
-      const Center(child: Text('Search Page')),
+      const EventSearch(),
       const CreateEventView(),
       const ProfileView(),
     ];

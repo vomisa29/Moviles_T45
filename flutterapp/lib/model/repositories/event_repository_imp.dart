@@ -1,6 +1,5 @@
 import 'dart:math';
 import '../models/event.dart';
-import '../models/venue.dart';
 import '../serviceAdapters/event_firestore_adapter.dart';
 import 'event_repository_int.dart';
 import 'venue_repository_imp.dart';
@@ -67,6 +66,26 @@ class EventRepositoryImplementation implements EventRepository {
     }
     return enriched;
   }
+
+  @override
+  Future<List<Event>> getByName(String eventName) async {
+    final events = await _dataSource.getByName(eventName);
+    final enriched = <Event>[];
+
+    for (final event in events) {
+      final venue = await _venueRepository.getOne(event.venueId);
+      if (venue != null) {
+        enriched.add(event.copyWith(
+          latitude: venue.latitude,
+          longitude: venue.longitude,
+        ));
+      } else {
+        enriched.add(event);
+      }
+    }
+    return enriched;
+  }
+
 
   @override
   Future<String> create(Event event) async {

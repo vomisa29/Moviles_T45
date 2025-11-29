@@ -31,6 +31,11 @@ class EventFirestoreDs {
     return q.docs.map((d) => _fromFirestore(d)).toList(growable: false);
   }
 
+  Future<List<Event>> getByName(String eventName) async {
+    final q = await _col.where('name', isEqualTo: eventName).get();
+    return q.docs.map((d) => _fromFirestore(d)).toList(growable: false);
+  }
+
   Future<List<Event>> getOverlappingEvents(
       {required String venueId,
         required DateTime startTime,
@@ -79,11 +84,11 @@ class EventFirestoreDs {
       endTime: (data['end_time'] as Timestamp).toDate(),
       maxCapacity: data['max_capacity'],
       skillLevel: skillFromString(data['skill_level']),
-      assistanceRate: (data['assistance_rate']).toDouble(),
+      assistanceRate: (data['assistance_rate'] as num?)?.toDouble(),
       booked: data['booked'],
-      assisted: data['assisted'],
-      avgRating: (data['avg_rating']).toDouble(),
-      numRatings: data['num_ratings'],
+      assisted: (data['assisted'] as num?)?.toInt(),
+      avgRating: (data['avg_rating'] as num?)?.toDouble(),
+      numRatings: (data['num_ratings'] as num?)?.toInt(),
       venueId: venueRef.id,
       organizerId: organizerRef.id,
       latitude: (data['latitude'] as num?)?.toDouble(),
