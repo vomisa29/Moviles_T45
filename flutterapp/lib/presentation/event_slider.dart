@@ -1,6 +1,9 @@
+// FULL CORRECTED CODE
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart'; // 1. Import go_router for navigation
 import '../app/auth_notifier.dart';
 import '../model/models/event.dart';
 import '../model/models/venue.dart';
@@ -161,27 +164,88 @@ class _EventDetails extends StatelessWidget {
     final media = MediaQuery.of(context);
     const green = Color(0xFF31B179);
     const red = Colors.red;
+    const blue = Colors.blueAccent; // Color for the "Edit Event" button
     final hp = media.size.width * 0.04;
     final spacing = media.size.height * 0.015;
     final iconSize = media.size.width * 0.06;
     final progress = (event.maxCapacity > 0) ? (event.booked / event.maxCapacity).clamp(0.0, 1.0) : 0.0;
 
     final bool isReserved = sliderVm.isReserved;
+    // 2. Get the new isOrganizer flag from the ViewModel
+    final bool isOrganizer = sliderVm.isOrganizer;
     final bool canInteract = authNotifier.isLoggedIn;
 
     Color buttonColor;
     String buttonText;
+    VoidCallback? onPressedAction;
 
-    if (isReserved) {
+    // 3. Update the button logic based on the new isOrganizer flag
+    if (isOrganizer) {
+      buttonColor = blue;
+      buttonText = 'Edit Event';
+      onPressedAction = () {
+        // For now, we navigate to a placeholder route.
+        // You will need to add this route to your router.dart file.
+        context.push('/edit_event_view', extra: event);
+      };
+    } else if (isReserved) {
       buttonColor = red;
       buttonText = 'Cancel Booking';
+      onPressedAction = () async {
+        final wasReserved = sliderVm.isReserved;
+        await sliderVm.handleBooking(authNotifier.user?.uid);
+
+        if (sliderVm.error != null && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(sliderVm.error!),
+                backgroundColor: Colors.red),
+          );
+        } else {
+          onBookingChanged?.call();
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(wasReserved ? 'Reservation Cancelled!' : 'Reservation Successful!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
+      };
     } else {
       buttonColor = green;
       buttonText = 'Reserve';
+      onPressedAction = onPressedAction = () async {
+        final wasReserved = sliderVm.isReserved;
+        await sliderVm.handleBooking(authNotifier.user?.uid);
+
+        if (sliderVm.error != null && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(sliderVm.error!),
+                backgroundColor: Colors.red),
+          );
+        } else {
+          onBookingChanged?.call();
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(wasReserved ? 'Reservation Cancelled!' : 'Reservation Successful!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
+      };
     }
 
+    // Disable the button if not logged in or offline
     if (!canInteract || !isConnected) {
       buttonColor = Colors.grey[400]!;
+      onPressedAction = null;
     }
 
     return Padding(
@@ -224,32 +288,8 @@ class _EventDetails extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-
-              onPressed: (sliderVm.isBooking || !canInteract || !isConnected)
-                  ? null
-                  : () async {
-                final wasReserved = sliderVm.isReserved;
-                await sliderVm.handleBooking(authNotifier.user?.uid);
-
-                if (sliderVm.error != null && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(sliderVm.error!),
-                        backgroundColor: Colors.red),
-                  );
-                } else {
-                  onBookingChanged?.call();
-
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(wasReserved ? 'Reservation Cancelled!' : 'Reservation Successful!'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                  }
-                }
-              },
+              // Disable the button if booking, or if the determined action is null (offline/logged out)
+              onPressed: sliderVm.isBooking ? null : onPressedAction,
               child: sliderVm.isBooking
                   ? const SizedBox(
                 height: 24,
@@ -334,3 +374,4 @@ class _SheetHandle extends StatelessWidget {
     );
   }
 }
+

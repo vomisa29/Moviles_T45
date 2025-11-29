@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutterapp/model/models/event.dart';
+import 'package:flutterapp/presentation/update_event_view.dart';
 import '../presentation/landing_page.dart';
 import '../presentation/login.dart';
 import '../presentation/main_view.dart';
@@ -42,6 +44,18 @@ GoRouter createRouter(AuthNotifier authNotifier) {
           return ProfileUpdateView(user: user);
         },
       ),
+
+      GoRoute(
+        path: '/edit_event_view',
+        builder: (context, state) {
+          final event = state.extra as Event?;
+          if (event == null) {
+            return const Scaffold(body: Center(child: Text("Error: No event data provided.")));
+          }
+          return UpdateEventView(event: event);
+        },
+      ),
+
     ],
 
     redirect: (BuildContext context, GoRouterState state) {

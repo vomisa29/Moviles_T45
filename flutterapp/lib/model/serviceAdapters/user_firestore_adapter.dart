@@ -46,6 +46,10 @@ class UserFirestoreDs {
   User _fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
 
+    final dynamic avgRatingValue = data['avgRating'];
+    final double? avgRating = (avgRatingValue is num) ? avgRatingValue.toDouble() : null;
+
+
     return User(
       uid: doc.id,
       email: data['email'],
@@ -58,7 +62,7 @@ class UserFirestoreDs {
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       sportList: data['sportList'] == null ? null : List<String>.from(data['sportList']),
 
-      avgRating: (data['avgRating'] as num?)?.toDouble(),
+      avgRating: avgRating,
       numRating: data['numRating'] as int?,
       assistanceRate: (data['assistanceRate'] as num?)?.toDouble(),
     );

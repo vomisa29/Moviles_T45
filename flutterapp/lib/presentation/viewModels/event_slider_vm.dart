@@ -30,7 +30,9 @@ class EventSliderVm extends ChangeNotifier {
   }
 
   bool _isReserved = false;
+  bool _isOrganizer = false;
   bool get isReserved => _isReserved;
+  bool get isOrganizer => _isOrganizer;
 
   bool _loading = true;
   String? _error;
@@ -47,15 +49,21 @@ class EventSliderVm extends ChangeNotifier {
       _loading = true;
       notifyListeners();
 
-      final results = await Future.wait([
-        _venueRepo.getOne(event.venueId),
-        if (currentUserId != null)
-          _bookedRepo.isEventBookedByUser(userId: currentUserId, eventId: event.id)
-      ]);
+      _venue = await _venueRepo.getOne(event.venueId);
 
-      _venue = results[0] as Venue?;
-      if (results.length > 1) {
-        _isReserved = results[1] as bool;
+      if (currentUserId != null && currentUserId == event.organizerId) {
+        _isOrganizer = true;
+        _isReserved = false;
+      }
+
+      else if (currentUserId != null) {
+        _isOrganizer = false;
+        _isReserved = await _bookedRepo.isEventBookedByUser(userId: currentUserId, eventId: event.id);
+      }
+
+      else {
+        _isOrganizer = false;
+        _isReserved = false;
       }
 
       _error = null;
