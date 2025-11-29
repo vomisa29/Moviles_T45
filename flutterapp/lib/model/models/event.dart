@@ -1,4 +1,4 @@
-enum Sport { soccer, basketball, tennis, volleyball }
+enum Sport { soccer, basketball, tennis, volleyball, football }
 enum SkillLevel { rookie, amateur, midLevel, pro, any }
 
 Sport sportFromString(String s) {
@@ -7,6 +7,7 @@ Sport sportFromString(String s) {
     case 'basketball': return Sport.basketball;
     case 'tennis': return Sport.tennis;
     case 'volleyball': return Sport.volleyball;
+    case 'football': return Sport.football;
     default: throw ArgumentError('Unknown sport: $s');
   }
 }
@@ -17,6 +18,7 @@ String sportToString(Sport s) {
     case Sport.basketball: return 'Basketball';
     case Sport.tennis: return 'Tennis';
     case Sport.volleyball: return 'Volleyball';
+    case Sport.football: return 'Football';
   }
 }
 
@@ -50,11 +52,11 @@ class Event {
   final DateTime endTime;
   final int maxCapacity;
   final SkillLevel skillLevel;
-  final double assistanceRate;
+  final double? assistanceRate;
   final int booked;
-  final int assisted;
-  final double avgRating;
-  final int numRatings;
+  final int? assisted;
+  final double? avgRating;
+  final int? numRatings;
   final String venueId;
   final String organizerId;
   final double? latitude;
@@ -69,11 +71,11 @@ class Event {
     required this.endTime,
     required this.maxCapacity,
     required this.skillLevel,
-    required this.assistanceRate,
+    this.assistanceRate,
     required this.booked,
-    required this.assisted,
-    required this.avgRating,
-    required this.numRatings,
+    this.assisted,
+    this.avgRating,
+    this.numRatings,
     required this.venueId,
     required this.organizerId,
     this.latitude,
