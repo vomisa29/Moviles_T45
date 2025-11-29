@@ -1,8 +1,7 @@
-import 'package:show_hide_password/show_hide_password.dart';
+import 'dart:developer';
+import 'package:flutterapp/model/models/event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/presentation/viewModels/event_search_vm.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
@@ -24,9 +23,11 @@ class _EventSearchState extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
+    return ChangeNotifierProvider(
+      create: (_) => eventSearchVm,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -37,7 +38,6 @@ class _EventSearchState extends StatelessWidget{
               //Search Bar
               TextField(
                 onSubmitted: (value) {
-                  
                 },
                 inputFormatters: [
                         LengthLimitingTextInputFormatter(30),
@@ -55,33 +55,10 @@ class _EventSearchState extends StatelessWidget{
                 controller: _searchController,
               ),
 
+              //EventList(eventSearchVm: eventSearchVm,loaded: eventSearchVm.loaded),
               const SizedBox(height: 24),
 
-              //Recommended Events
-              const Text(
-                "Recommended Events",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Recommended events list
-              Column(
-                children: const [
-                  EventTile(title: "Mazurén Park Meeting"),
-                  EventTile(title: "Cedritos Match"),
-                  EventTile(title: "Football 5"),
-                  EventTile(title: "Football 5"),
-                  EventTile(title: "Football 5"),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // 📋 All Events
+              // All Events
               const Text(
                 "All Events",
                 style: TextStyle(
@@ -90,29 +67,44 @@ class _EventSearchState extends StatelessWidget{
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(),
 
-              Column(
-                children: const [
-                  EventTile(title: "Mazurén Park Meeting"),
-                  EventTile(title: "Cedritos Match"),
-                  EventTile(title: "Football 5"),
-                  EventTile(title: "Football 5"),
-                  EventTile(title: "Football 5"),
-                ],
+              Consumer<EventSearchVm>(
+                builder: (context, eventSearchVm, _) {
+                  log('Loaded: ${eventSearchVm.loaded}');
+                  if (!eventSearchVm.loaded) {
+                    return Center(child: CircularProgressIndicator());
+                  } else {
+                    if (eventSearchVm.event.isEmpty) {
+                      return Center(child: Text('No hay eventos disponibles'));
+                    }
+
+                    return ListView.builder(
+                      itemCount: eventSearchVm.event.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        log(eventSearchVm.event.toString());
+                        //Event event = eventSearchVm.event[index];
+                        return EventTile(title: eventSearchVm.event[index].name, event: eventSearchVm.event[index]);
+                      },
+                    );
+                  }
+                }
               ),
+              
             ],
           ),
         ),
       ),
+    ),
     );
   }
 }
 
 class EventTile extends StatelessWidget {
   final String title;
+  final Event event;
 
-  const EventTile({required this.title, super.key});
+  const EventTile({required this.title,required this.event, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +137,9 @@ class EventTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              EventDetail(event: event); 
+            },
             child: const Text(
               "View event",
               style: TextStyle(color: Colors.white),
@@ -154,5 +148,17 @@ class EventTile extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+
+class EventDetail extends StatelessWidget{
+  final Event event;
+
+  const EventDetail({required this.event, super.key});
+
+  @override
+  Widget build(BuildContext context){
+    return Text(event.name);
   }
 }

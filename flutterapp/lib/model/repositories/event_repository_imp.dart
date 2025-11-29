@@ -1,6 +1,5 @@
 import 'dart:math';
 import '../models/event.dart';
-import '../models/venue.dart';
 import '../serviceAdapters/event_firestore_adapter.dart';
 import 'event_repository_int.dart';
 import 'venue_repository_imp.dart';
