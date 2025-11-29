@@ -7,7 +7,6 @@
     <list default="true" id="f5086c29-eedc-41a7-94f0-17b2d9f65087" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flutterapp/lib/presentation/event_search.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutterapp/lib/presentation/event_search.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutterapp/lib/presentation/viewModels/event_search_vm.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutterapp/lib/presentation/viewModels/event_search_vm.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,7 +32,7 @@
   "keyToString": {
     "Flutter.Unnamed.executor": "Run",
     "Flutter.main.dart.executor": "Run",
-    "Flutter.profiling.executor": "Debug",
+    "Flutter.profiling.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -49,7 +48,7 @@
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
-  <component name="RunManager" selected="Flutter.profiling">
+  <component name="RunManager" selected="Flutter.main.dart">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter" editBeforeRun="true" nameIsGenerated="true">
       <option name="filePath" value="$PROJECT_DIR$/flutterapp/lib/main.dart" />
       <method v="2" />

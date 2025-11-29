@@ -20,9 +20,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose(){
-    super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: _emailController,
                     decoration: InputDecoration(
                     labelText: 'Enter Email',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     ),
                   ),
                   SizedBox(height: 26),
@@ -67,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       );
                     }
                   ),
-                  SizedBox(height: 26),
+                  const SizedBox(height: 26),
                   ElevatedButton(
                     onPressed: (){
                       _register(context,_emailController.text, _passwordController.text,registerVm);
@@ -91,7 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                        Text("Already have an account?",
+                        const Text("Already have an account?",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Poppins',
@@ -104,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             //goToRegisterView(context);
                             context.go('/login');
                           },
-                          child: Text(
+                          child: const Text(
                             textAlign: TextAlign.center,
                             "Sign in",
                             style: TextStyle(
@@ -127,8 +127,8 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void _register(BuildContext context, email, String password, RegisterVm registerVm) async{
-    await registerVm.register(_emailController.text, _passwordController.text);
+  void _register(BuildContext context,String email, String password, RegisterVm registerVm) async{
+    await registerVm.register(email, password);
     _registerButtonAction(context,registerVm.error,registerVm.errorMessage);
   }
 
