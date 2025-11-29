@@ -45,7 +45,6 @@ class EventSearchVm with ChangeNotifier {
         notifyListeners();
         _event = await eventRepository.getAll();
         _loaded = true;
-        log(_event.toString());
         notifyListeners();
       }else{
         _event = <Event>[];

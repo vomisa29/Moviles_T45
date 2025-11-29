@@ -67,11 +67,10 @@ class _EventSearchState extends StatelessWidget{
                 ),
               ),
 
-              const SizedBox(),
+              const SizedBox(height:20),
 
               Consumer<EventSearchVm>(
                 builder: (context, eventSearchVm, _) {
-                  log('Loaded: ${eventSearchVm.loaded}');
                   if (!eventSearchVm.loaded) {
                     return Center(child: CircularProgressIndicator());
                   } else {
@@ -79,13 +78,15 @@ class _EventSearchState extends StatelessWidget{
                       return Center(child: Text('No hay eventos disponibles'));
                     }
 
-                    return ListView.builder(
-                      itemCount: eventSearchVm.event.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        log(eventSearchVm.event.toString());
-                        //Event event = eventSearchVm.event[index];
-                        return EventTile(title: eventSearchVm.event[index].name, event: eventSearchVm.event[index]);
-                      },
+                    return SizedBox(
+                        height: 500,
+                        child:ListView.builder(
+                          itemCount: eventSearchVm.event.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            //Event event = eventSearchVm.event[index];
+                            return EventTile(title: eventSearchVm.event[index].name, event: eventSearchVm.event[index]);
+                          },
+                        )
                     );
                   }
                 }
