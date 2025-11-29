@@ -21,6 +21,8 @@ class _EventSearchState extends StatelessWidget{
 
   final _searchController = TextEditingController();
 
+  static final formater = LengthLimitingTextInputFormatter(30);
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -39,9 +41,7 @@ class _EventSearchState extends StatelessWidget{
               TextField(
                 onSubmitted: (value) {
                 },
-                inputFormatters: [
-                        LengthLimitingTextInputFormatter(30),
-                ],
+                inputFormatters: [formater],                                         
                 decoration: InputDecoration(
                   hintText: "Search for an event",
                   prefixIcon: const Icon(Icons.search),
@@ -138,8 +138,14 @@ class EventTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
+            
             onPressed: () {
-              EventDetail(event: event); 
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EventDetail(event: event),
+                ),
+              );
             },
             child: const Text(
               "View event",
@@ -160,6 +166,8 @@ class EventDetail extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
-    return Text(event.name);
+    return Card.outlined(
+      child: SizedBox(width: 300, height: 100, child: Center(child: Text(event.name)))
+    );
   }
 }
