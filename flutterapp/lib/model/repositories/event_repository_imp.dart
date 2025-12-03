@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'dart:math';
+import 'package:flutterapp/model/models/venue.dart';
+
 import '../models/event.dart';
 import '../serviceAdapters/event_firestore_adapter.dart';
 import 'event_repository_int.dart';
@@ -112,6 +115,23 @@ class EventRepositoryImplementation implements EventRepository {
   Future<void> delete(String id) async {
     await _dataSource.delete(id);
   }
+
+  String eventListToJSON(List<Event> events){
+    final jsonList = events.map((e) => _dataSource.toJson(e)).toList();
+    return jsonEncode(jsonList);
+  }
+
+  List<Event> jsonToEventList(String jsonList){
+    List<dynamic> stringList = jsonDecode(jsonList);
+    return stringList.map((json) => _dataSource.fromJson(json)).toList();
+  }
+
+  Future<Venue> getVenue(event) async{
+    final venue = await _venueRepository.getOne(event.venueId);
+    return venue ?? Venue(id: "1", name: "evento", latitude: 2, longitude: 2, capacity: 2, bookingCount: 1);
+  }
+
+  
 
   /*@override
   Future<List<Event>> getNearby({
