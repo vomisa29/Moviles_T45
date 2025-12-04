@@ -56,12 +56,12 @@ class EventFirestoreDs {
 
   Future<String> create(Event event) async {
     final docRef = _col.doc();
-    await docRef.set(_toJson(event));
+    await docRef.set(toJson(event));
     return docRef.id;
   }
 
   Future<void> update(Event event) async {
-    await _col.doc(event.id).update(_toJson(event));
+    await _col.doc(event.id).update(toJson(event));
   }
 
   Future<void> delete(String id) async {
@@ -96,7 +96,7 @@ class EventFirestoreDs {
     );
   }
 
-  Map<String, dynamic> _toJson(Event event) {
+  Map<String, dynamic> toJson(Event event) {
     final venueRef = FirebaseFirestore.instance.collection('venues').doc(event.venueId);
     final organizerRef = FirebaseFirestore.instance.collection('users').doc(event.organizerId);
 
@@ -118,5 +118,27 @@ class EventFirestoreDs {
       'latitude': event.latitude,
       'longitude': event.longitude,
     };
+  }
+
+  Event fromJson(Map<String, dynamic> json) {
+    return Event(
+      id: json["id"],
+      name: json["name"],
+      description: json["description"],
+      sport: json["sport"],
+      startTime: DateTime.parse(json["startTime"]),
+      endTime: DateTime.parse(json["endTime"]),
+      maxCapacity: json["maxCapacity"],
+      skillLevel: json["skillLevel"],
+      assistanceRate: json["assistanceRate"],
+      booked: json["booked"],
+      assisted: json["assisted"],
+      avgRating: json["avgRating"],
+      numRatings: json["numRatings"],
+      venueId: json["venueId"],
+      organizerId: json["organizerId"],
+      latitude: json["latitude"],
+      longitude: json["longitude"]
+    );
   }
 }
