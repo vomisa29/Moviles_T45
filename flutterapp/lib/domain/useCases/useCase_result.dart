@@ -1,5 +1,6 @@
 class UseCaseResult {
   final bool success;
   final String? errorMessage;
-  const UseCaseResult({required this.success, this.errorMessage});
+  final Object? data;
+  const UseCaseResult({required this.success, this.errorMessage, this.data});
 }

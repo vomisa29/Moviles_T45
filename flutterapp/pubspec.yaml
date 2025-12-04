@@ -56,6 +56,11 @@ dependencies:
   is_valid: ^0.0.8
   internet_connection_checker_plus: ^2.9.0
   shared_preferences: ^2.5.3
+  drift: ^2.16.0
+  sqlite3_flutter_libs: ^0.5.20
+  path_provider: ^2.1.2
+  path: ^1.9.0
+
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +68,8 @@ dev_dependencies:
 
   flutter_launcher_icons: "^0.13.1"
   flutter_native_splash: "^2.4.0"
+  drift_dev: ^2.16.0
+  build_runner: ^2.4.8
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
