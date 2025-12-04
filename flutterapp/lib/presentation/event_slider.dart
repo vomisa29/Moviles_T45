@@ -7,6 +7,7 @@ import '../model/models/event.dart';
 import '../model/models/venue.dart';
 import 'viewModels/main_view_vm.dart';
 import 'viewModels/event_slider_vm.dart';
+import 'widgets/attendees_list_dialog.dart';
 
 class EventSlider extends StatefulWidget {
   const EventSlider({
@@ -244,6 +245,32 @@ class _EventDetails extends StatelessWidget {
 
           Text(event.description, style: theme.textTheme.bodyMedium, maxLines: 5, overflow: TextOverflow.ellipsis),
           SizedBox(height: spacing * 1.5),
+
+
+          if (isOrganizer || isReserved) ...[
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(CupertinoIcons.group),
+                label: const Text("See Who's Attending"),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.black54,
+                  side: const BorderSide(color: Colors.black26),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AttendeesListDialog(eventId: event.id);
+                    },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+
 
           SizedBox(
             width: double.infinity,
