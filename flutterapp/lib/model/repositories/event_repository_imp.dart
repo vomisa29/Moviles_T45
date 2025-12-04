@@ -71,6 +71,25 @@ class EventRepositoryImplementation implements EventRepository {
   }
 
   @override
+  Future<List<Event>> getByVenue(String venueid) async {
+    final events = await _dataSource.getByVenue(venueid);
+    final enriched = <Event>[];
+
+    for (final event in events) {
+      final venue = await _venueRepository.getOne(event.venueId);
+      if (venue != null) {
+        enriched.add(event.copyWith(
+          latitude: venue.latitude,
+          longitude: venue.longitude,
+        ));
+      } else {
+        enriched.add(event);
+      }
+    }
+    return enriched;
+  }
+
+  @override
   Future<List<Event>> getByName(String eventName) async {
     final events = await _dataSource.getByName(eventName);
     final enriched = <Event>[];

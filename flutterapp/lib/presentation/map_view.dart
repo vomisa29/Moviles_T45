@@ -1,9 +1,11 @@
-import 'package:flutter/cupertino.dart';import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutterapp/model/models/venue.dart';
+import 'package:flutterapp/presentation/widgets/events_at_venue_sheet.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'event_slider.dart';
-import 'viewModels/main_view_vm.dart'; // Import MainViewVm
+import 'viewModels/main_view_vm.dart';
 import 'viewModels/map_view_vm.dart';
 import 'widgets/venues_list_sheet.dart';
 
@@ -43,6 +45,21 @@ class MapViewBody extends StatelessWidget {
     );
   }
 
+  void _showEventsAtVenueSheet(BuildContext context, Venue venue) {
+    final mapViewVm = context.read<MapViewVm>();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => EventsAtVenueSheet(
+        venue: venue,
+        onEventSelected: (event) {
+          mapViewVm.setSelectedEvent(event);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<MapViewVm>();
@@ -52,22 +69,35 @@ class MapViewBody extends StatelessWidget {
     }
 
     if (vm.errorMessage != null && vm.currentPosition == null) {
-      return Center(child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(vm.errorMessage!, textAlign: TextAlign.center),
-      ));
+      return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(vm.errorMessage!, textAlign: TextAlign.center),
+          ));
     }
 
     return Stack(
       children: [
         GoogleMap(
           initialCameraPosition: CameraPosition(
-            target: vm.currentPosition ?? const LatLng(0, 0),
-            zoom: 14.5,
+            target: vm.currentPosition ?? const LatLng(34.0522, -118.2437),
+            zoom: 12,
           ),
           myLocationEnabled: true,
           myLocationButtonEnabled: true,
-          markers: vm.markers,
+          markers: vm.allVenues.where((venue) {
+            return vm.markers.any((m) => m.markerId.value == venue.id);
+          }).map((venue) {
+            return Marker(
+              markerId: MarkerId(venue.id),
+              position: LatLng(venue.latitude, venue.longitude),
+              infoWindow: InfoWindow(title: venue.name),
+              icon: vm.markers.first.icon,
+              onTap: () {
+                _showEventsAtVenueSheet(context, venue);
+              },
+            );
+          }).toSet(),
         ),
         Positioned(
           bottom: 20,
@@ -77,7 +107,7 @@ class MapViewBody extends StatelessWidget {
             children: [
               ElevatedButton.icon(
                 icon: const Icon(CupertinoIcons.sportscourt),
-                label: const Text('Venues'),
+                label: const Text('Top Venues'),
                 onPressed: () => _showVenuesSheet(context, vm.allVenues),
                 style: _buttonStyle(),
               ),

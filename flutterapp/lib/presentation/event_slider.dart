@@ -1,14 +1,13 @@
-// FULL CORRECTED CODE
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart'; // 1. Import go_router for navigation
+import 'package:go_router/go_router.dart';
 import '../app/auth_notifier.dart';
 import '../model/models/event.dart';
 import '../model/models/venue.dart';
 import 'viewModels/main_view_vm.dart';
 import 'viewModels/event_slider_vm.dart';
+import 'widgets/attendees_list_dialog.dart';
 
 class EventSlider extends StatefulWidget {
   const EventSlider({
@@ -70,7 +69,6 @@ class _EventSliderState extends State<EventSlider> {
   }
 }
 
-
 class _EventContent extends StatelessWidget {
   const _EventContent({
     required this.event,
@@ -86,12 +84,10 @@ class _EventContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final currentUserId = context.watch<AuthNotifier>().user?.uid;
 
     return ChangeNotifierProvider(
       key: ValueKey(event.id),
-
       create: (_) => EventSliderVm(event: event, currentUserId: currentUserId),
       child: Material(
         elevation: 12,
@@ -123,8 +119,7 @@ class _EventContent extends StatelessWidget {
                       return _EventDetails(
                           event: vm.event,
                           venue: vm.venue!,
-                          onBookingChanged: onBookingChanged
-                      );
+                          onBookingChanged: onBookingChanged);
                     },
                   ),
                 ],
@@ -136,7 +131,6 @@ class _EventContent extends StatelessWidget {
     );
   }
 }
-
 
 class _EventDetails extends StatelessWidget {
   const _EventDetails({required this.event, required this.venue, this.onBookingChanged});
@@ -154,7 +148,6 @@ class _EventDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final sliderVm = context.watch<EventSliderVm>();
     final authNotifier = context.watch<AuthNotifier>();
     final mainVm = context.watch<MainViewVm>();
@@ -164,14 +157,13 @@ class _EventDetails extends StatelessWidget {
     final media = MediaQuery.of(context);
     const green = Color(0xFF31B179);
     const red = Colors.red;
-    const blue = Colors.blueAccent; // Color for the "Edit Event" button
+    const blue = Colors.blueAccent;
     final hp = media.size.width * 0.04;
     final spacing = media.size.height * 0.015;
     final iconSize = media.size.width * 0.06;
     final progress = (event.maxCapacity > 0) ? (event.booked / event.maxCapacity).clamp(0.0, 1.0) : 0.0;
 
     final bool isReserved = sliderVm.isReserved;
-    // 2. Get the new isOrganizer flag from the ViewModel
     final bool isOrganizer = sliderVm.isOrganizer;
     final bool canInteract = authNotifier.isLoggedIn;
 
@@ -179,72 +171,27 @@ class _EventDetails extends StatelessWidget {
     String buttonText;
     VoidCallback? onPressedAction;
 
-    // 3. Update the button logic based on the new isOrganizer flag
     if (isOrganizer) {
       buttonColor = blue;
       buttonText = 'Edit Event';
-      onPressedAction = () {
-        // For now, we navigate to a placeholder route.
-        // You will need to add this route to your router.dart file.
-        context.push('/edit_event_view', extra: event);
-      };
-    } else if (isReserved) {
-      buttonColor = red;
-      buttonText = 'Cancel Booking';
-      onPressedAction = () async {
-        final wasReserved = sliderVm.isReserved;
-        await sliderVm.handleBooking(authNotifier.user?.uid);
-
-        if (sliderVm.error != null && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(sliderVm.error!),
-                backgroundColor: Colors.red),
-          );
-        } else {
-          onBookingChanged?.call();
-
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(wasReserved ? 'Reservation Cancelled!' : 'Reservation Successful!'),
-                backgroundColor: Colors.green,
-              ),
-            );
-          }
-        }
-      };
+      onPressedAction = () => context.push('/edit_event_view', extra: event);
     } else {
-      buttonColor = green;
-      buttonText = 'Reserve';
-      onPressedAction = onPressedAction = () async {
-        final wasReserved = sliderVm.isReserved;
+      if (isReserved) {
+        buttonColor = red;
+        buttonText = 'Cancel Booking';
+      } else {
+        buttonColor = green;
+        buttonText = 'Reserve';
+      }
+      onPressedAction = () async {
         await sliderVm.handleBooking(authNotifier.user?.uid);
-
-        if (sliderVm.error != null && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(sliderVm.error!),
-                backgroundColor: Colors.red),
-          );
-        } else {
+        if (sliderVm.error == null) {
           onBookingChanged?.call();
-
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(wasReserved ? 'Reservation Cancelled!' : 'Reservation Successful!'),
-                backgroundColor: Colors.green,
-              ),
-            );
-          }
         }
       };
     }
 
-    // Disable the button if not logged in or offline
     if (!canInteract || !isConnected) {
-      buttonColor = Colors.grey[400]!;
       onPressedAction = null;
     }
 
@@ -258,11 +205,31 @@ class _EventDetails extends StatelessWidget {
           Text(event.name, style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87)),
           SizedBox(height: spacing),
 
-          _InfoRow(icon: CupertinoIcons.calendar, text: _formatDate(event.startTime), subText: _formatTimeRange(event.startTime, event.endTime), iconSize: iconSize),
-          SizedBox(height: spacing),
-          _InfoRow(icon: CupertinoIcons.location_solid, text: venue.name, iconSize: iconSize),
-          SizedBox(height: spacing),
-          _InfoRow(icon: CupertinoIcons.person_3_fill, text: '${event.booked}/${event.maxCapacity} participants', iconSize: iconSize),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: Column(
+                  children: [
+                    _InfoRow(icon: CupertinoIcons.calendar, text: _formatDate(event.startTime), subText: _formatTimeRange(event.startTime, event.endTime), iconSize: iconSize),
+                    SizedBox(height: spacing),
+                    _InfoRow(icon: CupertinoIcons.location_solid, text: venue.name, iconSize: iconSize),
+                    SizedBox(height: spacing),
+                    _InfoRow(icon: CupertinoIcons.person_3_fill, text: '${event.booked}/${event.maxCapacity} participants', iconSize: iconSize),
+                  ],
+                ),
+              ),
+
+              if (!isOrganizer && canInteract) const SizedBox(width: 16),
+
+              if (!isOrganizer && canInteract)
+                Expanded(
+                  flex: 2,
+                  child: _buildAffinityScore(context, sliderVm, isConnected),
+                ),
+            ],
+          ),
           SizedBox(height: spacing * 0.4),
 
           ClipRRect(
@@ -279,34 +246,56 @@ class _EventDetails extends StatelessWidget {
           Text(event.description, style: theme.textTheme.bodyMedium, maxLines: 5, overflow: TextOverflow.ellipsis),
           SizedBox(height: spacing * 1.5),
 
+
+          if (isOrganizer || isReserved) ...[
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(CupertinoIcons.group),
+                label: const Text("See Who's Attending"),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.black54,
+                  side: const BorderSide(color: Colors.black26),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AttendeesListDialog(eventId: event.id);
+                    },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+
+
           SizedBox(
             width: double.infinity,
             height: media.size.height * 0.06,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: buttonColor,
+                backgroundColor: onPressedAction == null ? Colors.grey[400] : buttonColor,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              // Disable the button if booking, or if the determined action is null (offline/logged out)
               onPressed: sliderVm.isBooking ? null : onPressedAction,
               child: sliderVm.isBooking
-                  ? const SizedBox(
-                height: 24,
-                width: 24,
-                child:
-                CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
-              )
+                  ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
                   : Text(buttonText),
             ),
           ),
-          if (!isConnected)
+          if (!isConnected && !isOrganizer)
             const Padding(
               padding: EdgeInsets.only(top: 8.0),
               child: Center(
                 child: Text(
-                  "Internet connection required to manage your booking.",
+                  "Connect to the internet to calculate affinity and manage bookings.",
                   style: TextStyle(color: Colors.grey),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -315,8 +304,79 @@ class _EventDetails extends StatelessWidget {
       ),
     );
   }
-}
 
+  Widget _buildAffinityScore(BuildContext context, EventSliderVm vm, bool isConnected) {
+    if (!isConnected && vm.affinityScore == null) {
+      return const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(CupertinoIcons.wifi_slash, size: 24, color: Colors.grey),
+          SizedBox(height: 6),
+          Text(
+            'Affinity offline',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+        ],
+      );
+    }
+
+    if (vm.isLoadingAffinity) {
+      return const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(width: 24, height: 24, child: CircularProgressIndicator()),
+          SizedBox(height: 8),
+          Text(
+            'Calculating...',
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+        ],
+      );
+    }
+
+    if (vm.affinityScore == null) {
+      return const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(CupertinoIcons.question_circle, size: 24, color: Colors.grey),
+          SizedBox(height: 6),
+          Text(
+            'Cannot calculate',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+        ],
+      );
+    }
+
+    final scorePercent = (vm.affinityScore! * 100).toInt();
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Your Affinity", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54)),
+        const SizedBox(height: 6),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 60,
+              height: 60,
+              child: CircularProgressIndicator(
+                value: vm.affinityScore,
+                strokeWidth: 5,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(Color.lerp(Colors.orange, Colors.green, vm.affinityScore!)!),
+              ),
+            ),
+            Text('$scorePercent%', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ],
+    );
+  }
+}
 
 class _InfoRow extends StatelessWidget {
   const _InfoRow({required this.icon, required this.text, this.subText, required this.iconSize});
@@ -374,4 +434,3 @@ class _SheetHandle extends StatelessWidget {
     );
   }
 }
-

@@ -1,4 +1,6 @@
+import 'package:flutterapp/model/models/event.dart';
 import '../../model/models/booked.dart';
+import '../../model/repositories/analytics_repositories/cancelation_repository_imp.dart';
 import '../../model/repositories/booked_repository_imp.dart';
 import '../../model/repositories/user_repository_imp.dart';
 import '../../model/repositories/event_repository_imp.dart';
@@ -8,15 +10,17 @@ class CreateBookingUseCase {
   final BookedEventRepositoryImplementation _bookedEventRepository;
   final UserRepositoryImplementation _userRepository;
   final EventRepositoryImplementation _eventRepository;
-
+  final CancelationRepositoryImplementation _cancelationRepository;
 
   CreateBookingUseCase({
     required BookedEventRepositoryImplementation bookedEventRepository,
     required UserRepositoryImplementation userRepository,
     required EventRepositoryImplementation eventRepository,
+    required CancelationRepositoryImplementation cancelationRepository,
   })  : _bookedEventRepository = bookedEventRepository,
         _userRepository = userRepository,
-        _eventRepository = eventRepository;
+        _eventRepository = eventRepository,
+        _cancelationRepository = cancelationRepository;
 
   Future<UseCaseResult> execute({
     required String? userId,
@@ -36,12 +40,12 @@ class CreateBookingUseCase {
       ]);
 
       final userExists = checks[0] != null;
-      final eventExists = checks[1] != null;
+      final eventExists = checks[1] as Event?;
 
       if (!userExists) {
         return const UseCaseResult(success: false, errorMessage: "User not found.");
       }
-      if (!eventExists) {
+      if (eventExists == null) {
         return const UseCaseResult(success: false, errorMessage: "Event not found.");
       }
 
@@ -54,6 +58,18 @@ class CreateBookingUseCase {
         return const UseCaseResult(success: false, errorMessage: "You have already reserved this event.");
       }
 
+      final existingCancelation = await _cancelationRepository.getOneByUseridAndEventid(
+        userId: userId,
+        eventId: eventExists.id,
+      );
+
+      if (existingCancelation != null) {
+        await _cancelationRepository.deleteByUseridAndEventid(
+          userId: userId,
+          eventId: eventExists.id,
+        );
+        print("Removed previous cancellation for user $userId at venue ${eventExists.venueId}");
+      }
 
       final newBooking = BookedEvent(
         eventId: eventId,
