@@ -1,5 +1,3 @@
-// FULL CORRECTED CODE
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -209,9 +207,7 @@ class _EventDetails extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- CHANGE 1: Event Info is now on the left ---
               Expanded(
-                // --- CHANGE 2: Give more space to the event info (flex: 3) ---
                 flex: 3,
                 child: Column(
                   children: [
@@ -224,13 +220,10 @@ class _EventDetails extends StatelessWidget {
                 ),
               ),
 
-              // Show a divider only if the affinity score is also visible
               if (!isOrganizer && canInteract) const SizedBox(width: 16),
 
-              // --- CHANGE 1: Affinity Score is now on the right ---
               if (!isOrganizer && canInteract)
                 Expanded(
-                  // --- CHANGE 2: Give less space to the affinity score (flex: 2) ---
                   flex: 2,
                   child: _buildAffinityScore(context, sliderVm, isConnected),
                 ),
@@ -290,12 +283,12 @@ class _EventDetails extends StatelessWidget {
       return const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(CupertinoIcons.wifi_slash, size: 24, color: Colors.grey), // Smaller icon
+          Icon(CupertinoIcons.wifi_slash, size: 24, color: Colors.grey),
           SizedBox(height: 6),
           Text(
             'Affinity offline',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey, fontSize: 12), // Smaller font
+            style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ],
       );
@@ -305,11 +298,11 @@ class _EventDetails extends StatelessWidget {
       return const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(width: 24, height: 24, child: CircularProgressIndicator()), // Smaller indicator
+          SizedBox(width: 24, height: 24, child: CircularProgressIndicator()),
           SizedBox(height: 8),
           Text(
             'Calculating...',
-            style: TextStyle(color: Colors.grey, fontSize: 12), // Smaller font
+            style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ],
       );
@@ -319,12 +312,12 @@ class _EventDetails extends StatelessWidget {
       return const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(CupertinoIcons.question_circle, size: 24, color: Colors.grey), // Smaller icon
+          Icon(CupertinoIcons.question_circle, size: 24, color: Colors.grey),
           SizedBox(height: 6),
           Text(
             'Cannot calculate',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey, fontSize: 12), // Smaller font
+            style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ],
       );
@@ -335,18 +328,17 @@ class _EventDetails extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // --- CHANGE 3: Made fonts and sizes smaller ---
         Text("Your Affinity", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54)),
         const SizedBox(height: 6),
         Stack(
           alignment: Alignment.center,
           children: [
             SizedBox(
-              width: 60, // Smaller circle
+              width: 60,
               height: 60,
               child: CircularProgressIndicator(
                 value: vm.affinityScore,
-                strokeWidth: 5, // Thinner stroke
+                strokeWidth: 5,
                 backgroundColor: Colors.grey[300],
                 valueColor: AlwaysStoppedAnimation<Color>(Color.lerp(Colors.orange, Colors.green, vm.affinityScore!)!),
               ),

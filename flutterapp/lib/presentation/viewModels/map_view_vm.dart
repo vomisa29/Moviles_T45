@@ -2,7 +2,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import '../../model/models/venue.dart';
-import '../../model/repositories/event_repository_imp.dart';
 import 'package:flutter/material.dart';
 import '../../model/models/event.dart';
 import '../../model/repositories/venue_repository_imp.dart';
@@ -10,7 +9,6 @@ import '../../model/repositories/venue_repository_imp.dart';
 enum EventFilterState { all, nearby }
 
 class MapViewVm extends ChangeNotifier {
-  late final EventRepositoryImplementation _eventRepository;
   late final VenueRepositoryImplementation _venueRepository;
 
   StreamSubscription<Position>? _positionStreamSubscription;
@@ -20,8 +18,6 @@ class MapViewVm extends ChangeNotifier {
   String? _errorMessage;
   Set<Marker> _markers = {};
   BitmapDescriptor? _customIcon;
-
-  List<Event> _allEvents = [];
   List<Venue> _allVenues = [];
   Event? _selectedEvent;
   EventFilterState _filterState = EventFilterState.all;
@@ -36,7 +32,6 @@ class MapViewVm extends ChangeNotifier {
 
   MapViewVm() {
     _venueRepository = VenueRepositoryImplementation();
-    _eventRepository = EventRepositoryImplementation(venueRepository: _venueRepository);
     _init();
   }
 
@@ -68,7 +63,7 @@ class MapViewVm extends ChangeNotifier {
 
       await _loadCustomPin();
       await _initializeLocationServices();
-      await _loadAllEventsAndVenues();
+      await _loadAllVenues();
 
       if (_currentPosition != null) {
         _filterState = EventFilterState.nearby;
@@ -88,8 +83,7 @@ class MapViewVm extends ChangeNotifier {
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-        _errorMessage = "Location permission is required to find nearby events.";
-        return;
+        _errorMessage = "Location permission is required to find nearby venues.";
       }
     }
 
@@ -98,7 +92,6 @@ class MapViewVm extends ChangeNotifier {
       _currentPosition = LatLng(position.latitude, position.longitude);
     } catch (e) {
       _errorMessage = "Could not get current location.";
-      return;
     }
 
     const LocationSettings locationSettings = LocationSettings(
@@ -120,49 +113,38 @@ class MapViewVm extends ChangeNotifier {
     );
   }
 
-  Future<void> _loadAllEventsAndVenues() async {
-    final results = await Future.wait([
-      _eventRepository.getAll(),
-      _venueRepository.getAll(),
-    ]);
-    _allEvents = results[0] as List<Event>;
-    _allVenues = results[1] as List<Venue>;
+  Future<void> _loadAllVenues() async {
+    _allVenues = await _venueRepository.getAll();
   }
 
   void _updateMarkers() {
-    List<Event> eventsToShow;
+    List<Venue> venuesToShow;
     if (_filterState == EventFilterState.nearby) {
       if (_currentPosition == null) {
-        eventsToShow = [];
+        venuesToShow = [];
       } else {
-        eventsToShow = _allEvents.where((event) {
-          if (event.latitude == null || event.longitude == null) return false;
+        venuesToShow = _allVenues.where((venue) {
           final distance = Geolocator.distanceBetween(
             _currentPosition!.latitude,
             _currentPosition!.longitude,
-            event.latitude!,
-            event.longitude!,
+            venue.latitude,
+            venue.longitude,
           );
           return distance <= 10000;
         }).toList();
       }
     } else {
-      eventsToShow = _allEvents;
+      venuesToShow = _allVenues;
     }
-    _markers = eventsToShow.map((event) {
-      if (event.latitude == null || event.longitude == null) return null;
-      return Marker(
-          markerId: MarkerId(event.id),
-          position: LatLng(event.latitude!, event.longitude!),
-          infoWindow: InfoWindow(title: event.name),
-          icon: _customIcon ?? BitmapDescriptor.defaultMarker,
-          onTap: () => _onMarkerTap(event));
-    }).whereType<Marker>().toSet();
-  }
 
-  Future<void> _onMarkerTap(Event event) async {
-    _selectedEvent = event;
-    notifyListeners();
+    _markers = venuesToShow.map((venue) {
+      return Marker(
+        markerId: MarkerId(venue.id),
+        position: LatLng(venue.latitude, venue.longitude),
+        infoWindow: InfoWindow(title: venue.name),
+        icon: _customIcon ?? BitmapDescriptor.defaultMarker,
+      );
+    }).toSet();
   }
 
   Future<void> _loadCustomPin() async {
@@ -171,4 +153,10 @@ class MapViewVm extends ChangeNotifier {
       'lib/assets/Logo_app_SportLink_Small.png',
     );
   }
+
+  void setSelectedEvent(Event event) {
+    _selectedEvent = event;
+    notifyListeners();
+  }
 }
+

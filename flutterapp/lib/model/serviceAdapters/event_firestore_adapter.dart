@@ -11,6 +11,9 @@ class EventFirestoreDs {
   CollectionReference<Map<String, dynamic>> get _usersCol =>
       FirebaseFirestore.instance.collection('users');
 
+  CollectionReference<Map<String, dynamic>> get _venuesCol =>
+      FirebaseFirestore.instance.collection('venues');
+
   String generateId() => _col.doc().id;
 
   Future<Event?> getOne(String id) async {
@@ -27,6 +30,13 @@ class EventFirestoreDs {
   Future<List<Event>> getByOrganizer(String organizerid) async {
     final organizerRef = _usersCol.doc(organizerid);
     final q = await _col.where('organizerid', isEqualTo: organizerRef).get();
+
+    return q.docs.map((d) => _fromFirestore(d)).toList(growable: false);
+  }
+
+  Future<List<Event>> getByVenue(String venueid) async {
+    final venueRef = _venuesCol.doc(venueid);
+    final q = await _col.where('venueid', isEqualTo: venueRef).get();
 
     return q.docs.map((d) => _fromFirestore(d)).toList(growable: false);
   }

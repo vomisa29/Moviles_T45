@@ -234,7 +234,6 @@ class ProfileView extends StatelessWidget {
             const SizedBox(height: 32),
             Text("Posted Events", style: theme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            // Use the new isLoadingEvents flag here as well
             if (vm.isLoadingEvents)
               const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()))
             else

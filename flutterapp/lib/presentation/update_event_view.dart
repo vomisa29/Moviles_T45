@@ -1,5 +1,3 @@
-// FULL CORRECTED CODE
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/model/models/event.dart';
@@ -41,7 +39,6 @@ class UpdateEventViewBody extends StatelessWidget {
 
   Widget _buildForm(BuildContext context, UpdateEventVm vm) {
     final theme = Theme.of(context).textTheme;
-    // Get connectivity status from the globally provided MainViewVm
     final isConnected = context.watch<MainViewVm>().isConnected;
 
     return SafeArea(
@@ -61,7 +58,6 @@ class UpdateEventViewBody extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-            // --- Editable Fields ---
             _buildTextField(vm.nameController, label: "Event Name"),
             const SizedBox(height: 24),
             _buildTextField(vm.descriptionController, label: "Description", maxLines: 4),
@@ -85,11 +81,8 @@ class UpdateEventViewBody extends StatelessWidget {
               label: "Max Participants",
               keyboardType: TextInputType.number,
             ),
-            const SizedBox(height: 40), // Increased spacing after the last field
+            const SizedBox(height: 40),
 
-            // --- Read-Only Fields for Venue and Time have been REMOVED ---
-
-            // --- Action Button ---
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
