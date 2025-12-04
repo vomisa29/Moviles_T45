@@ -1,9 +1,12 @@
+// FULL CORRECTED FILE
+
 import 'package:flutter/foundation.dart';
 import 'package:flutterapp/domain/useCases/useCase_get_affinity.dart';
-import 'package:flutterapp/model/repositories/affinity_score_repository_imp.dart';
+import 'package:flutterapp/model/repositories/affinity_score_repository_imp.dart';import 'package:flutterapp/model/repositories/analytics_repositories/cancelation_repository_imp.dart';
 import 'package:flutterapp/model/repositories/booked_repository_imp.dart';
 import 'package:flutterapp/model/repositories/user_repository_imp.dart';
 import '../../domain/useCases/useCase_create_booked.dart';
+import '../../domain/useCases/useCase_delete_booked.dart'; // 1. Import the new delete use case
 import '../../model/models/event.dart';
 import '../../model/models/venue.dart';
 import '../../model/repositories/event_repository_imp.dart';
@@ -13,10 +16,13 @@ class EventSliderVm extends ChangeNotifier {
   final Event event;
   final String? currentUserId;
 
+  // Repositories
   final VenueRepositoryImplementation _venueRepo;
-  final CreateBookingUseCase _createBookingUseCase;
   final BookedEventRepositoryImplementation _bookedRepo;
 
+  // Use Cases
+  final CreateBookingUseCase _createBookingUseCase;
+  final DeleteBookingUseCase _deleteBookingUseCase; // 2. Add the delete use case instance
   final GetAffinityUseCase _getAffinityUseCase;
 
   EventSliderVm({
@@ -36,10 +42,21 @@ class EventSliderVm extends ChangeNotifier {
           eventRepository: EventRepositoryImplementation(
             venueRepository: VenueRepositoryImplementation(),
           ),
+          // Ensure CreateBookingUseCase has its required dependency
+          cancelationRepository: CancelationRepositoryImplementation(),
+        ),
+  // 3. Initialize the DeleteBookingUseCase with its required dependencies
+        _deleteBookingUseCase = DeleteBookingUseCase(
+          bookedEventRepository: BookedEventRepositoryImplementation(),
+          eventRepository: EventRepositoryImplementation(
+            venueRepository: VenueRepositoryImplementation(),
+          ),
+          cancelationRepository: CancelationRepositoryImplementation(),
         ) {
     _init();
   }
 
+  // --- State Properties ---
   bool _isReserved = false;
   bool _isOrganizer = false;
   bool _loading = true;
@@ -49,6 +66,7 @@ class EventSliderVm extends ChangeNotifier {
   double? _affinityScore;
   bool _isLoadingAffinity = false;
 
+  // --- Getters ---
   bool get isReserved => _isReserved;
   bool get isOrganizer => _isOrganizer;
   bool get isLoading => _loading;
@@ -138,22 +156,26 @@ class EventSliderVm extends ChangeNotifier {
     notifyListeners();
   }
 
+  // 4. THIS IS THE REFACTORED METHOD
   Future<void> cancelBooking(String? userId) async {
-    if (userId == null) {
-      _error = "User not logged in.";
-      notifyListeners();
-      return;
-    }
     _isBooking = true;
     _error = null;
     notifyListeners();
-    try {
-      await _bookedRepo.cancelByUserIdAndEventId(userId: userId, eventId: event.id);
+
+    // Call the use case instead of the repository directly
+    final result = await _deleteBookingUseCase.execute(
+      userId: userId,
+      eventId: event.id,
+    );
+
+    if (result.success) {
       _isReserved = false;
-    } catch (e) {
-      _error = "Failed to cancel booking. Please try again.";
+    } else {
+      _error = result.errorMessage ?? "Failed to cancel booking. Please try again.";
     }
+
     _isBooking = false;
     notifyListeners();
   }
 }
+
